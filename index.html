@@ -26,6 +26,7 @@
             --content-margin-mobile: 16px; /* Mobil specifik marginal */
             --content-margin-desktop: 40px; /* Desktop specifik marginal */
             --desktop-header-height: 80px; /* Höjd för desktop-headern */
+            --mobile-header-height: 60px; /* Ny höjd för mobil headern */
             --bottom-nav-height: 70px; /* Höjd för bottennavigering */
         }
 
@@ -131,39 +132,66 @@
             margin-left: 20px;
         }
 
-
-        /* --- Mobile Header (Home Page) --- */
-        .home-header-mobile {
-            display: none; /* Dölj som standard, visas på mobil för home via JS */
+        /* --- New Mobile Header (General for all pages) --- */
+        .mobile-header {
+            display: none; /* Hidden by default, shown by JS on mobile */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            justify-content: flex-end;
-            padding: var(--content-margin-mobile);
+            height: var(--mobile-header-height);
+            background-color: var(--color-white);
+            border-bottom: 1px solid var(--color-gray-light);
             z-index: 1001;
             box-sizing: border-box;
+            padding: 0 var(--content-margin-mobile);
+            display: flex; /* Flexbox for layout */
+            justify-content: space-between; /* Space logo and icons */
+            align-items: center;
         }
 
-        .home-profile-icon {
-            width: 40px;
-            height: 40px;
+        .mobile-header .logo {
+            font-family: var(--font-display);
+            font-size: 1.5em; /* Mindre på mobil */
+            font-weight: 400;
+            color: var(--color-black);
+            text-decoration: none;
+            font-style: italic;
+        }
+
+        .mobile-header .header-icons {
+            display: flex;
+            gap: 15px; /* Mellanrum mellan ikonerna */
+        }
+
+        .mobile-header .header-icon {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: var(--color-gray-light); /* Lätt grå bakgrund för ikoner */
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.4em;
-            color: var(--color-white);
+            font-size: 1.1em;
+            color: var(--color-gray-dark);
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: background-color var(--transition-duration);
         }
-
-        .home-profile-icon:hover {
+        .mobile-header .header-icon:hover {
+            background-color: var(--color-gray-medium);
+            color: var(--color-white);
+        }
+        /* Specific override for the home page mobile header profile icon */
+        #home-page-mobile-profile {
+            background-color: rgba(0,0,0,0.5); /* Semi-transparent black on home hero */
+            color: var(--color-white);
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        #home-page-mobile-profile:hover {
             background-color: var(--color-black);
         }
+
 
         /* --- Page Containers --- */
         .page-container {
@@ -185,6 +213,7 @@
             text-align: center;
             color: var(--color-black);
             box-sizing: border-box;
+            /* Padding sätts via JS på body */
         }
 
         #search-page-main {
@@ -355,14 +384,30 @@
             cursor: pointer;
         }
 
+        /* --- Filter Tags Container (Not sticky, horizontal scroll) --- */
         .filter-tags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
+            display: flex; /* Use flexbox for horizontal layout */
+            overflow-x: auto; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+            -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
+            margin-bottom: 20px; /* Space below the tags */
+            padding-bottom: 10px; /* Extra padding to prevent clipping of shadow/content below */
+            gap: 10px; /* Space between tags */
+            /* Add horizontal padding so tags don't touch the edge */
+            padding-left: var(--content-margin-mobile);
+            padding-right: var(--content-margin-mobile);
+            /* Reset any padding from search-page-content to handle its own padding */
+            margin-left: calc(-1 * var(--content-margin-mobile));
+            margin-right: calc(-1 * var(--content-margin-mobile));
+        }
+        /* Hide scrollbar for Webkit browsers (Chrome, Safari) */
+        .filter-tags-container::-webkit-scrollbar {
+            display: none;
         }
 
         .filter-tag {
+            flex-shrink: 0; /* Prevent tags from shrinking */
             background-color: var(--color-gray-light);
             color: var(--color-black);
             padding: 8px 15px;
@@ -371,6 +416,7 @@
             font-weight: 500;
             cursor: pointer;
             transition: background-color var(--transition-duration);
+            white-space: nowrap; /* Ensure tag text stays on one line */
         }
 
         .filter-tag.active {
@@ -945,8 +991,16 @@
         /* --- Responsive adjustments --- */
         @media (max-width: 768px) { /* Mobilspecifika inställningar */
             body {
-                padding-top: 0; /* Ingen topp-padding för desktop header på mobil */
+                padding-top: var(--mobile-header-height); /* Utrymme för nya mobil headern */
                 padding-bottom: var(--bottom-nav-height); /* Utrymme för bottom nav */
+            }
+
+            .mobile-header {
+                display: flex; /* Visa den nya mobil headern */
+            }
+            /* Dölj den gamla home-header-mobile, dess funktionalitet tas över */
+            .home-header-mobile {
+                display: none;
             }
 
             .search-page-content {
@@ -964,10 +1018,11 @@
             }
 
             .search-sticky-header {
-                top: 0; /* Fäster direkt till toppen av mobilview */
+                top: var(--mobile-header-height); /* Fäster direkt under mobil headern */
                 padding-left: var(--content-margin-mobile);
                 padding-right: var(--content-margin-mobile);
             }
+            /* Filter tags har redan sin egen padding-left/right, så ingen här */
 
 
             .hero-content h1 {
@@ -1037,6 +1092,9 @@
             .desktop-header {
                 display: flex; /* Show desktop header, hidden by JS on mobile */
             }
+            .mobile-header {
+                display: none; /* Dölj mobil header på desktop */
+            }
 
             .page-container#home-page {
                 padding-top: 0; /* Desktop header handles top spacing */
@@ -1066,9 +1124,19 @@
             }
 
             .search-sticky-header {
-                top: 0; /* Fäster precis under desktop headern */
+                top: var(--desktop-header-height); /* Fäster precis under desktop headern */
                 padding-left: var(--content-margin-desktop);
                 padding-right: var(--content-margin-desktop);
+            }
+            /* Filter tags */
+            .filter-tags-container {
+                /* Återställ horisontell padding för desktop-storlek */
+                padding-left: var(--content-margin-desktop);
+                padding-right: var(--content-margin-desktop);
+                margin-left: calc(-1 * var(--content-margin-desktop));
+                margin-right: calc(-1 * var(--content-margin-desktop));
+                flex-wrap: wrap; /* Tillåt taggar att brytas på desktop om de får plats */
+                overflow-x: hidden; /* Ingen horisontell scroll på desktop */
             }
 
 
@@ -1138,11 +1206,18 @@
             </div>
         </header>
 
-        <header class="home-header-mobile" id="home-header-mobile">
-            <div class="home-profile-icon" id="open-profile-slideout-mobile">
-                <i class="fas fa-user"></i>
+        <header class="mobile-header" id="mobile-header">
+            <a href="#" class="logo">Erik Olsson</a>
+            <div class="header-icons">
+                <div class="header-icon" id="home-page-mobile-profile">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="header-icon" id="mobile-menu-open">
+                    <i class="fas fa-bars"></i>
+                </div>
             </div>
         </header>
+
 
         <section class="page-container" id="home-page">
             <div class="hero-main-content">
@@ -1173,21 +1248,6 @@
                         <i class="fas fa-sliders-h"></i>
                     </div>
 
-                    <div class="filter-tags-container">
-                        <span class="filter-tag">sommarstuga</span>
-                        <span class="filter-tag">sekelskifte</span>
-                        <span class="filter-tag active">Havsnära</span>
-                        <span class="filter-tag">Barnvänligt</span>
-                        <span class="filter-tag">Renoveringsobjekt</span>
-                        <span class="filter-tag">Energi</span>
-                        <span class="filter-tag">Balkong</span>
-                        <span class="filter-tag">Pool</span>
-                        <span class="filter-tag">Naturnära</span>
-                        <span class="filter-tag">Bastukök</span>
-                        <span class="filter-tag">Sommaridyll</span>
-                        <span class="filter-tag">Sjöutsikt</span>
-                    </div>
-
                     <div class="filter-options">
                         <button class="filter-option-button">
                             <i class="fas fa-sliders-h"></i> Filter
@@ -1197,6 +1257,22 @@
                         </button>
                     </div>
                 </div>
+                <div class="filter-tags-container">
+                    <span class="filter-tag">sommarstuga</span>
+                    <span class="filter-tag">sekelskifte</span>
+                    <span class="filter-tag active">Havsnära</span>
+                    <span class="filter-tag">Barnvänligt</span>
+                    <span class="filter-tag">Renoveringsobjekt</span>
+                    <span class="filter-tag">Energi</span>
+                    <span class="filter-tag">Balkong</span>
+                    <span class="filter-tag">Pool</span>
+                    <span class="filter-tag">Naturnära</span>
+                    <span class="filter-tag">Bastukök</span>
+                    <span class="filter-tag">Sommaridyll</span>
+                    <span class="filter-tag">Sjöutsikt</span>
+                </div>
+
+
                 <div class="listing-grid">
                     <div class="listing-card">
                         <img src="https://images.unsplash.com/photo-1582268715875-e9185a97dd50?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxob3VzZSUyMGZhY2FkZSwlMjBwYW5vcmFtYXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
@@ -1276,7 +1352,7 @@
                         </div>
                     </div>
                     <div class="listing-card">
-                        <img src="https://images.unsplash.com/photo-1582046897931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw1fHxob3VzZSUyMGZhY2FkZSwlMjBwYW5vcmFtYXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                        <img src="https://images.unsplash.com/photo-1582046897931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw1fHxob3VzZSUyMGZhY2FkZSwlMjBwYW5vcmFtYXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&lib=rb-4.0.3&q=80&w=1080" alt="Bostad">
                         <span class="tag">Kommande</span>
                         <i class="far fa-heart heart-icon"></i>
                         <div class="listing-card-content">
@@ -1421,7 +1497,7 @@
         const homePage = document.getElementById('home-page');
         const searchPage = document.getElementById('search-page-main');
         const desktopHeader = document.getElementById('desktop-header');
-        const mobileHeader = document.getElementById('home-header-mobile');
+        const mobileHeader = document.getElementById('mobile-header'); // Ny: Generell mobil header
         const bottomNav = document.getElementById('bottom-nav');
 
         let currentPageId = 'home-page'; // Track current active page
@@ -1513,19 +1589,27 @@
                 // searchPage doesn't need direct padding-top, sticky header handles it with top: 0
             } else { // Mobile
                 desktopHeader.style.display = 'none'; // Hide desktop header on mobile
+                mobileHeader.style.display = 'flex'; // Show new mobile header
                 bottomNav.style.display = 'flex'; // Show bottom nav on mobile
-                document.body.style.paddingBottom = 'var(--bottom-nav-height)'; // Space for bottom nav on mobile
-                document.body.style.paddingTop = '0'; // No desktop header, no top padding on body
 
-                // Mobile header is only visible on home page
-                if (currentPageId === 'home-page') {
-                    mobileHeader.style.display = 'flex';
-                    homePage.style.paddingTop = 'calc(40px + var(--content-margin-mobile))'; // Adjust for mobile header
-                } else {
-                    mobileHeader.style.display = 'none'; // Hide mobile header on other pages
-                    homePage.style.paddingTop = '0'; // Reset if not home
+                document.body.style.paddingTop = 'var(--mobile-header-height)'; // Space for new mobile header
+                document.body.style.paddingBottom = 'var(--bottom-nav-height)'; // Space for bottom nav on mobile
+
+                // Handle specific mobile header icon styling for home page
+                const homeProfileIcon = document.getElementById('home-page-mobile-profile');
+                if (homeProfileIcon) {
+                    if (currentPageId === 'home-page') {
+                        homeProfileIcon.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                        homeProfileIcon.style.color = 'var(--color-white)';
+                        homeProfileIcon.style.border = '1px solid rgba(255,255,255,0.3)';
+                        homeProfileIcon.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+                    } else {
+                        homeProfileIcon.style.backgroundColor = 'var(--color-gray-light)';
+                        homeProfileIcon.style.color = 'var(--color-gray-dark)';
+                        homeProfileIcon.style.border = 'none';
+                        homeProfileIcon.style.boxShadow = 'none';
+                    }
                 }
-                // For search page, sticky header sets its own top based on mobile (top:0)
             }
         }
 
@@ -1574,7 +1658,8 @@
         });
 
         // --- Toggle "Mer" Overlay Menu (Black menu) ---
-        const moreButton = document.getElementById('more-button');
+        const moreButton = document.getElementById('more-button'); // From bottom nav
+        const mobileMenuOpenBtn = document.getElementById('mobile-menu-open'); // From new mobile header
         const overlayMenu = document.getElementById('overlay-menu');
         const closeMenuButton = document.getElementById('close-menu');
 
@@ -1587,6 +1672,7 @@
         }
 
         if (moreButton) moreButton.addEventListener('click', toggleOverlayMenu);
+        if (mobileMenuOpenBtn) mobileMenuOpenBtn.addEventListener('click', toggleOverlayMenu); // Nytt: Öppna overlay från nya mobil headern
         if (closeMenuButton) closeMenuButton.addEventListener('click', toggleOverlayMenu);
         if (overlayMenu) {
             overlayMenu.addEventListener('click', (event) => {
@@ -1598,7 +1684,8 @@
 
 
         // --- Profile Slide-out Menu Logic (White profile page) ---
-        const openProfileSlideoutBtnMobile = document.getElementById('open-profile-slideout-mobile');
+        // Changed home-page-mobile-profile to be the mobile profile button
+        const openProfileSlideoutBtnMobile = document.getElementById('home-page-mobile-profile'); // Nu: Den som sitter i mobil headern
         const openProfileSlideoutBtnDesktop = document.getElementById('open-profile-slideout-desktop');
         const profileSlideout = document.getElementById('profile-slideout');
         const closeProfileSlideoutBtn = document.getElementById('close-profile-slideout');
