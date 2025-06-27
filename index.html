@@ -29,23 +29,31 @@
             --bottom-nav-height: 70px; /* Höjd för bottennavigering */
         }
 
-        body {
+        html, body {
             margin: 0;
+            padding: 0;
+            height: 100%; /* Ensure html and body take full height */
+            overflow-x: hidden; /* Prevent horizontal scroll for the entire page */
+            scroll-behavior: smooth; /* Smooth scroll for anchor links */
+        }
+
+        body {
             font-family: var(--font-body);
             background-color: var(--color-white);
             color: var(--color-black);
             min-height: 120vh; /* Ensure scrollability */
-            overflow-x: hidden; /* Förhindra horisontell scroll */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            padding-top: 0; /* Default till 0, sätts av JS för desktop */
-            padding-bottom: 0; /* Default till 0, sätts av JS för mobil */
+            /* Padding sätts av JS baserat på desktop/mobil header */
+            padding-top: 0;
+            padding-bottom: 0;
         }
 
         /* --- Global Container for all pages to prevent horizontal overflow --- */
         #app-container {
             position: relative;
-            overflow: hidden; /* Ensure nothing breaks out horizontally */
+            /* overflow: hidden; /* VARNING: Denna KAN orsaka problem med sticky om den finns på en förälder till sticky-elementet */
+            /* Ta bort den här om sticky inte fungerar, eller hantera med JS */
         }
 
         /* --- Desktop Header (Erik Olsson logo etc.) --- */
@@ -161,12 +169,15 @@
         .page-container {
             display: none; /* Hidden by default, shown by JS */
             padding-top: 0; /* Base, adjusted by JS */
+            width: 100%; /* Ensure they take full width */
+            box-sizing: border-box;
+            /* Inte overflow:hidden här heller om det är en förälder till sticky */
         }
 
         #home-page {
             min-height: 100vh;
             position: relative;
-            overflow: hidden;
+            overflow: hidden; /* Denna sida kan ha overflow:hidden då den inte innehåller sticky */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -178,6 +189,7 @@
 
         #search-page-main {
              padding: 0; /* No padding here, handled by internal sticky header */
+             /* Viktigt: Inte overflow:hidden här för att sticky ska fungera */
         }
 
 
@@ -225,13 +237,14 @@
         /* --- "Sök Bostad" Page Content --- */
         .search-page-content {
             padding: var(--content-margin-mobile); /* Standard padding for the rest of the content */
-            padding-top: 0; /* Managed by sticky header */
+            padding-top: 0; /* Managed by sticky header or the top of the body/main */
             position: relative; /* To contain sticky header */
+            /* VIKTIGT: Denna FÅR INTE ha overflow: hidden */
         }
 
         .search-sticky-header {
             position: sticky;
-            top: 0; /* Fäst till toppen av viewporten */
+            top: 0; /* Fäst till toppen av viewporten (eller närmsta scrollbara förälder utan overflow) */
             z-index: 990;
             background-color: var(--color-white);
             padding-bottom: 10px; /* Space under sticky elements */
@@ -241,13 +254,14 @@
             padding-right: var(--content-margin-mobile); /* Mobile padding */
             box-sizing: border-box;
             width: 100%;
+            /* VIKTIGT: Ge den en bakgrundsfärg för att dölja innehållet under när den är sticky */
         }
 
         .search-page-title {
             font-family: var(--font-display);
             font-size: 2.5em;
             font-weight: 400;
-            margin-top: 20px; /* Lägg till lite marginal om så önskas */
+            margin-top: 20px; /* Kan justeras för att ge lite luft överst */
             margin-bottom: 20px;
         }
 
@@ -371,6 +385,8 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
+            /* Lägg till padding-bottom här för att ge utrymme ovanför bottom nav på mobil */
+            padding-bottom: 20px; /* Initialt värde, justeras av JS vid behov */
         }
 
         .listing-card {
@@ -449,7 +465,7 @@
             z-index: 2000;
             transform: translateX(100%);
             transition: transform var(--transition-duration) ease-out;
-            overflow-y: auto;
+            overflow-y: auto; /* Viktigt för scrollbar profilpanel */
             -webkit-overflow-scrolling: touch; /* För mjukare scroll på iOS */
         }
 
@@ -458,7 +474,7 @@
         }
 
         .profile-slideout .close-btn {
-            position: sticky;
+            position: sticky; /* Detta blir också sticky i profilen */
             top: 0;
             left: 0;
             background-color: var(--color-white);
@@ -804,6 +820,7 @@
             transition: transform 0.4s ease-in-out;
             padding: 0 var(--content-margin-mobile); /* Mobil marginal */
             box-sizing: border-box;
+            overflow-y: auto; /* Allow scrolling if menu content is too long */
         }
 
         .overlay-menu.show {
@@ -885,9 +902,14 @@
                 /* padding-top: 20px; Om du vill ha luft mellan skärmkant och search header */
             }
             .search-page-title {
-                margin-top: 0; /* No extra top margin */
+                margin-top: 0; /* No extra top margin on mobile, if it's the first element in sticky header */
                 font-size: 2em;
             }
+            .search-page-content {
+                /* Ingen extra padding-top på mobil search-page-content, sticky header är top:0 */
+                padding-top: 0;
+            }
+
 
             .hero-content h1 {
                 font-size: 2.8em;
@@ -952,8 +974,11 @@
                 padding-top: var(--desktop-header-height); /* Utrymme för fixed desktop header */
                 padding-bottom: 0; /* Ingen bottom nav på desktop */
             }
+            /* För search-sticky-header på desktop: den fäster vid toppen av viewporten. */
+            /* Eftersom body har padding-top pga desktop-headern, kommer search-sticky-header att fästa
+               precis under desktop-headern om den har top: 0; */
             .search-sticky-header {
-                top: 0; /* Fäster direkt till toppen av search-page-main som börjar under desktop header */
+                top: 0;
             }
             .desktop-header {
                 display: flex; /* Show desktop header, hidden by JS on mobile */
@@ -970,6 +995,17 @@
 
             .page-container#search-page-main {
                 padding: 0; /* Managed by sticky header */
+            }
+
+            .search-page-content {
+                padding: var(--content-margin-desktop); /* Större padding på desktop */
+                padding-top: 0; /* För att den sticky-headern ska kunna "klättra upp" till top:0 */
+            }
+
+            .search-page-title {
+                margin-top: 0; /* No extra top margin on desktop, it's inside sticky header */
+                margin-bottom: 30px;
+                font-size: 3em;
             }
 
             .hero-main-content {
@@ -995,16 +1031,6 @@
                 flex: 1;
                 min-width: 300px;
                 height: auto;
-            }
-
-            .search-page-content {
-                padding: var(--content-margin-desktop);
-                padding-top: 0;
-            }
-            .search-page-title {
-                margin-top: 0;
-                margin-bottom: 30px;
-                font-size: 3em;
             }
 
             .listing-grid {
@@ -1058,6 +1084,7 @@
             <div class="hero-main-content">
                 <div class="hero-content-text">
                     <h1>Välkommen till Erik Olsson Fastighetsförmedling </h1>
+                    <p>Ett lite smartare mäkleri helt enkelt</p>
                 </div>
                 <img src="https://images.pexels.com/photos/32438148/pexels-photo-32438148.jpeg?_gl=1*1ev5dk9*_ga*MTE2MzIyMTA4OS4xNzM5NTQwNDg2*_ga_8JE65Q40S6*czE3NTEwMzQ1NzQkbzMzJGcxJHQxNzUxMDM0NTg4JGo0NiRsMCRoMA.." alt="Modern house" class="hero-content-image">
             </div>
@@ -1531,6 +1558,40 @@
                 console.log('Active search tab:', this.dataset.searchTarget);
             });
         });
+
+        // --- Felsökningsfunktion för overflow:hidden ---
+        function findOverflowHiddenParents(element) {
+            let parent = element.parentElement;
+            let parentsWithOverflow = [];
+            while (parent) {
+                const style = window.getComputedStyle(parent);
+                if (style.overflow !== 'visible' && style.overflow !== 'clip') { // Check for any non-visible overflow
+                    parentsWithOverflow.push({ element: parent, overflow: style.overflow });
+                }
+                parent = parent.parentElement;
+            }
+            return parentsWithOverflow;
+        }
+
+        // Kör denna när sidan är laddad och 'search-page-main' är synlig
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... (din befintliga DOMContentLoaded-kod) ...
+
+            // Lägg till detta sist i DOMContentLoaded för att felsöka sticky
+            const stickyHeader = document.querySelector('.search-sticky-header');
+            if (stickyHeader) {
+                const parents = findOverflowHiddenParents(stickyHeader);
+                if (parents.length > 0) {
+                    console.warn('Varning: Följande föräldraelement till .search-sticky-header har en "overflow" egenskap som inte är "visible". Detta kan förhindra att position:sticky fungerar som förväntat:');
+                    parents.forEach(p => {
+                        console.warn(p.element, 'Overflow:', p.overflow);
+                    });
+                } else {
+                    console.log('.search-sticky-header har inga föräldrar med non-visible overflow. Problemet är troligen något annat.');
+                }
+            }
+        });
+
     </script>
 
 </body>
