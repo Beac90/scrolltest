@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Välkommen</title>
+    <title>EO Market</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
@@ -18,11 +18,15 @@
             --color-gray-dark: #333333;
             --color-gray-medium: #888888;
             --color-gray-light: #EEEEEE;
-            --color-orange: #C67F33; /* Färg från initialikon */
+            --color-orange: #C67F33; /* Färg från initialikon, burned orange */
             --font-body: 'Inter', sans-serif;
-            --font-display: 'Playfair Display', serif; /* Ny font för rubriker i overlay-menyn */
+            --font-display: 'Playfair Display', serif; /* Ny font för rubriker/display */
             --border-radius-small: 8px;
             --transition-duration: 0.3s;
+            --content-margin-mobile: 16px; /* Mobil specifik marginal */
+            --content-margin-desktop: 40px; /* Desktop specifik marginal */
+            --desktop-header-height: 80px; /* Höjd för desktop-headern */
+            --search-sticky-height: 120px; /* Ungefärlig höjd för sticky sök/filter */
         }
 
         body {
@@ -37,15 +41,97 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- Header for Home Page (Hero Section) --- */
-        .home-header {
+        /* --- Global Container for Sök Bostad Page --- */
+        .page-container {
+            display: none; /* Dölj som standard, visas av JS eller media query */
+            padding-top: 0; /* Sticky element hanterar detta */
+        }
+
+        /* --- Desktop Header (Erik Olsson logo etc.) --- */
+        .desktop-header {
+            display: none; /* Dölj som standard, visas på desktop */
+            position: sticky; /* Sticky */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--desktop-header-height);
+            background-color: var(--color-white);
+            border-bottom: 1px solid var(--color-gray-light);
+            z-index: 999;
+            box-sizing: border-box;
+            padding: 0 var(--content-margin-desktop);
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .desktop-header .logo {
+            font-family: var(--font-display);
+            font-size: 1.8em;
+            font-weight: 400;
+            color: var(--color-black);
+            text-decoration: none;
+            font-style: italic;
+        }
+
+        .desktop-header nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 30px;
+        }
+
+        .desktop-header nav a {
+            text-decoration: none;
+            color: var(--color-gray-dark);
+            font-weight: 500;
+            font-size: 0.95em;
+            transition: color var(--transition-duration);
+        }
+
+        .desktop-header nav a:hover {
+            color: var(--color-black);
+        }
+
+        .desktop-header .cta-button {
+            background-color: var(--color-gray-light);
+            color: var(--color-black);
+            padding: 10px 20px;
+            border-radius: var(--border-radius-small);
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color var(--transition-duration);
+        }
+
+        .desktop-header .cta-button:hover {
+            background-color: var(--color-gray-medium);
+            color: var(--color-white);
+        }
+
+        .desktop-header .profile-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--color-gray-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            color: var(--color-gray-dark);
+            cursor: pointer;
+            margin-left: 20px;
+        }
+
+
+        /* --- Mobile Header (Home Page) --- */
+        .home-header-mobile {
+            display: flex; /* Visas som standard på mobil */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            display: flex;
             justify-content: flex-end;
-            padding: 20px;
+            padding: var(--content-margin-mobile);
             z-index: 1001;
         }
 
@@ -87,7 +173,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://images.unsplash.com/photo-1549298495-9271c6d3c9f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw0fHxuYXR1cmUlMkBzY2FuZGluYXZpYW58ZW58MHx8fHwxNzE5NjkxMzQ1fDB8fHw&ixlib=rb-4.0.3&q=80&w=1080') center/cover no-repeat fixed;
+            background: url('https://images.pexels.com/photos/32438148/pexels-photo-32438148.jpeg?_gl=1*1ev5dk9*_ga*MTE2MzIyMTA4OS4xNzM5NTQwNDg2*_ga_8JE65Q40S6*czE3NTEwMzQ1NzQkbzMzJGcxJHQxNzUxMDM0NTg4JGo0NiRsMCRoMA..') center/cover no-repeat fixed;
+            background-position: center bottom; /* Justera position för bilden */
             z-index: -1;
             filter: brightness(0.95);
         }
@@ -114,6 +201,221 @@
             max-width: 600px;
             margin: 0 auto;
             color: var(--color-black);
+        }
+
+        /* --- "Sök Bostad" Page Content --- */
+        .search-page {
+            padding: var(--content-margin-mobile); /* Standard padding */
+            padding-top: 0; /* Sticky hanterar detta */
+            display: none; /* Hidden by default */
+        }
+        .search-page.show-page {
+            display: block;
+        }
+
+        .search-sticky-header {
+            position: sticky;
+            top: 0; /* Fastsättning direkt under desktop header eller högst upp på mobil */
+            z-index: 990;
+            background-color: var(--color-white);
+            padding-bottom: 10px; /* Space under sticky elements */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Lätt skugga för sticky effekt */
+            transition: box-shadow var(--transition-duration);
+            padding-top: var(--desktop-header-height); /* Ge plats för desktop header */
+            margin-top: calc(-1 * var(--desktop-header-height)); /* Dra upp för att sticky ska fungera */
+        }
+        
+        .search-page-title {
+            font-family: var(--font-display);
+            font-size: 2.5em;
+            font-weight: 400;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .search-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--color-gray-light);
+            margin-bottom: 20px;
+        }
+
+        .search-tab-button {
+            flex: 1;
+            padding: 12px 0;
+            text-align: center;
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--color-gray-medium);
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: color var(--transition-duration);
+        }
+
+        .search-tab-button.active {
+            color: var(--color-black);
+            font-weight: 600;
+        }
+
+        .search-tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--color-black);
+        }
+
+        .search-input-container {
+            display: flex;
+            align-items: center;
+            background-color: var(--color-gray-light);
+            border-radius: var(--border-radius-small);
+            padding: 10px 15px;
+            margin-bottom: 15px;
+        }
+
+        .search-input-container input {
+            flex-grow: 1;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 1em;
+            padding: 5px 0;
+        }
+
+        .search-input-container i {
+            color: var(--color-gray-medium);
+            margin-left: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+
+        .filter-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-tag {
+            background-color: var(--color-gray-light);
+            color: var(--color-black);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color var(--transition-duration);
+        }
+
+        .filter-tag.active {
+            background-color: var(--color-gray-dark);
+            color: var(--color-white);
+        }
+
+        .filter-tag:hover {
+            background-color: var(--color-gray-medium);
+            color: var(--color-white);
+        }
+
+        .filter-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-option-button {
+            background-color: var(--color-gray-light);
+            color: var(--color-black);
+            padding: 8px 12px;
+            border-radius: var(--border-radius-small);
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color var(--transition-duration);
+        }
+
+        .filter-option-button i {
+            margin-right: 8px;
+        }
+
+        .filter-option-button:hover {
+            background-color: var(--color-gray-medium);
+        }
+
+        .listing-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .listing-card {
+            background-color: var(--color-white);
+            border-radius: var(--border-radius-small);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .listing-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .listing-card .tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: rgba(0,0,0,0.6);
+            color: var(--color-white);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .listing-card .heart-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: var(--color-white);
+            font-size: 1.5em;
+            cursor: pointer;
+            text-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+
+        .listing-card-content {
+            padding: 15px;
+        }
+
+        .listing-card-content h3 {
+            font-family: var(--font-display);
+            font-style: italic;
+            font-size: 1.4em;
+            margin: 0 0 5px;
+            line-height: 1.2;
+        }
+
+        .listing-card-content p {
+            font-size: 0.9em;
+            color: var(--color-gray-medium);
+            margin: 0 0 10px;
+        }
+
+        .listing-card-content .details {
+            font-size: 0.9em;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         /* --- Full-height Slide-out Profile Menu (white, from right) --- */
@@ -143,7 +445,7 @@
             left: 0;
             background-color: var(--color-white);
             width: 100%;
-            padding: 20px;
+            padding: 20px var(--content-margin-mobile); /* Använd mobil marginal */
             text-align: left;
             color: var(--color-black);
             font-size: 2.5em;
@@ -157,7 +459,7 @@
         }
 
         .profile-content {
-            padding: 0 20px 20px; /* Mer kontrollerad padding för nättare utseende */
+            padding: 0 var(--content-margin-mobile) var(--content-margin-mobile); /* Använd mobil marginal */
         }
 
         .profile-content .profile-top-header {
@@ -165,7 +467,7 @@
             align-items: center;
             padding-top: 20px;
             padding-bottom: 15px;
-            border-bottom: 1px solid var(--color-gray-light); /* Enkel linje */
+            border-bottom: 1px solid var(--color-gray-light);
             margin-bottom: 20px;
         }
 
@@ -185,9 +487,9 @@
         }
 
         .profile-content .profile-info h1 {
-            font-family: var(--font-display); /* Använd Playfair för namn */
+            font-family: var(--font-display);
             font-size: 1.6em;
-            font-weight: 400; /* Lättare vikt */
+            font-weight: 400;
             margin: 0;
             line-height: 1.2;
         }
@@ -214,13 +516,13 @@
         .profile-content .segmented-control {
             display: flex;
             border-bottom: 1px solid var(--color-gray-light);
-            margin-top: 0; /* Tar bort extra mellanrum här */
+            margin-top: 0;
             margin-bottom: 20px;
         }
 
         .profile-content .segmented-button {
             flex: 1;
-            padding: 12px 15px;
+            padding: 12px 0;
             text-align: center;
             font-size: 1em;
             font-weight: 500;
@@ -261,7 +563,7 @@
 
         /* Min bostad Card (Säljläge) */
         .my-listing-card {
-            background-image: url('https://images.unsplash.com/photo-1549298495-9271c6d3c9f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw0fHxuYXR1cmUlMkBzY2FuZGluYXZpYW58ZW58MHx8fHwxNzE5NjkxMzQ1fDB8fHw&ixlib=rb-4.0.3&q=80&w=1080'); /* Uppdaterad bild till den du länkade */
+            background-image: url('https://images.unsplash.com/photo-1549298495-9271c6d3c9f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw0fHxuYXR1cmUlMkBzY2FuZGluYXZpYW58ZW58MHx8fHwxNzE5NjkxMzQ1fDB8fHw&ixlib=rb-4.0.3&q=80&w=1080');
             background-size: cover;
             background-position: center;
             border-radius: var(--border-radius-small);
@@ -291,7 +593,7 @@
         .card-content {
             position: relative;
             z-index: 1;
-            padding: 15px 20px;
+            padding: 15px var(--content-margin-mobile); /* Använd mobil marginal */
         }
 
         .card-content .label {
@@ -302,7 +604,7 @@
         }
 
         .card-content h3 {
-            font-family: var(--font-display); /* Använd Playfair för Årstagogs Väg 9C */
+            font-family: var(--font-display);
             font-style: italic;
             font-size: 1.8em;
             margin: 0 0 10px;
@@ -323,7 +625,7 @@
         }
          .card-action-arrow {
             position: absolute;
-            right: 15px;
+            right: var(--content-margin-mobile); /* Använd mobil marginal */
             top: 50%;
             transform: translateY(-50%);
             color: var(--color-white);
@@ -337,12 +639,12 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding-right: 10px;
+            /* padding-right: 0; - handled by content-margin-mobile */
         }
         .matches-header h2 {
             font-family: var(--font-display); /* Använd Playfair för Matchningar */
             font-size: 1.4em;
-            font-weight: 400; /* Lättare vikt */
+            font-weight: 400;
             margin: 0;
         }
         .matches-header a {
@@ -426,7 +728,7 @@
             padding: 5px 0;
             color: var(--color-gray-medium);
             text-decoration: none;
-            transition: color var(--transition-duration);
+            transition: color var(--transition-duration), transform var(--transition-duration);
             font-family: var(--font-body);
             font-weight: 500;
             display: flex;
@@ -439,15 +741,23 @@
         .nav-item.active {
             color: var(--color-black);
         }
+        .nav-item.active i {
+            color: var(--color-black);
+            transform: scale(1.1);
+        }
 
         .nav-item:hover {
             color: var(--color-black);
+        }
+        .nav-item:hover i {
+             color: var(--color-black);
         }
 
         .nav-item i {
             font-size: 1.4em;
             display: block;
             margin-bottom: 4px;
+            transition: color var(--transition-duration), transform var(--transition-duration);
         }
 
         .nav-item span {
@@ -459,22 +769,23 @@
             transform: translateY(100%);
         }
 
-        /* --- Overlay Menu (för "Mer" i bottom nav - SVART MED VIT TEXT) --- */
+        /* --- Overlay Menu (för "Mer" i bottom nav - SVART MED VIT TEXT, VÄNSTERSTÄLLDA LÄNKAR) --- */
         .overlay-menu {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--color-black); /* Svart bakgrund */
+            background-color: var(--color-black);
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             z-index: 2000;
             transform: translateY(100%);
             transition: transform 0.4s ease-in-out;
-            padding-bottom: 60px; /* Space for bottom content if needed */
+            padding: 0 var(--content-margin-mobile); /* Mobil marginal */
+            box-sizing: border-box;
         }
 
         .overlay-menu.show {
@@ -483,28 +794,26 @@
 
         .overlay-menu .menu-content {
             width: 100%;
-            max-width: 500px; /* Max bredd för innehåll */
-            padding: 0 20px;
-            box-sizing: border-box;
-            text-align: center; /* Centrera länkar som helhet */
+            max-width: 500px;
+            margin: 0;
+            text-align: left;
         }
 
         .overlay-menu a {
-            font-family: var(--font-display); /* Serif-font för rubriker */
+            font-family: var(--font-display);
             color: var(--color-white);
             text-decoration: none;
-            font-size: 2.2em; /* Större rubriker */
-            font-weight: 400; /* Lättare vikt */
-            padding: 15px 0;
+            font-size: 2.2em;
+            font-weight: 400;
+            padding: 10px 0;
             display: block;
-            width: 100%; /* Fyller bredden */
-            text-align: center;
-            transition: background-color var(--transition-duration), color var(--transition-duration);
+            width: 100%;
+            text-align: left;
+            transition: color var(--transition-duration);
         }
 
         .overlay-menu a:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.8);
+            color: var(--color-orange);
         }
 
         .overlay-menu .sub-links {
@@ -516,20 +825,20 @@
         }
 
         .overlay-menu .sub-links li a {
-            font-family: var(--font-body); /* Body font för sub-länkar */
-            font-size: 1.1em; /* Mindre text */
+            font-family: var(--font-body);
+            font-size: 1.1em;
             font-weight: 400;
-            padding: 10px 0;
-            color: rgba(255, 255, 255, 0.7); /* Lättare färg */
+            padding: 8px 0;
+            color: rgba(255, 255, 255, 0.7);
         }
         .overlay-menu .sub-links li a:hover {
-             color: var(--color-white);
+             color: var(--color-orange);
         }
 
         .overlay-menu .close-menu {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: var(--content-margin-mobile); /* Mobil marginal */
+            right: var(--content-margin-mobile); /* Mobil marginal */
             color: var(--color-white);
             font-size: 2.5em;
             cursor: pointer;
@@ -546,9 +855,8 @@
             to { transform: scaleX(1); }
         }
 
-
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
+        /* --- Responsive adjustments --- */
+        @media (max-width: 768px) { /* Mobilspecifika inställningar */
             .hero-content h1 {
                 font-size: 2.8em;
             }
@@ -556,14 +864,14 @@
                 font-size: 1em;
             }
             .profile-slideout {
-                max-width: 100%; /* Full width on smaller screens */
+                max-width: 100%;
             }
             .profile-slideout .close-btn {
-                padding: 15px;
+                padding: 15px var(--content-margin-mobile);
                 font-size: 2em;
             }
             .profile-content {
-                padding: 0 15px 15px;
+                padding: 0 var(--content-margin-mobile) var(--content-margin-mobile);
             }
             .profile-content .profile-initials {
                 width: 50px;
@@ -592,13 +900,78 @@
                 font-size: 0.7em;
             }
             .overlay-menu a {
-                font-size: 1.8em; /* Mindre på mobil */
+                font-size: 1.8em;
             }
             .overlay-menu .sub-links li a {
                 font-size: 1em;
             }
             .overlay-menu .close-menu {
                 font-size: 2em;
+                top: 15px;
+                right: 15px;
+            }
+
+            /* Search Page Mobile Adjustments */
+            .search-page {
+                padding: var(--content-margin-mobile);
+                padding-top: 0; /* Sticky handled below */
+            }
+            .search-sticky-header {
+                padding-top: 0; /* Ingen desktop header att ge plats för */
+                margin-top: 0;
+            }
+            .search-page-title {
+                margin-top: 0; /* Ingen extra top margin */
+                font-size: 2em;
+            }
+            .listing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (min-width: 769px) { /* Desktop-specifika inställningar */
+            body {
+                padding-bottom: 0; /* No bottom nav on desktop */
+                padding-top: var(--desktop-header-height); /* Give space for fixed desktop header */
+            }
+            .home-header-mobile, #bottom-nav {
+                display: none; /* Dölj mobil header och bottom nav */
+            }
+            .desktop-header {
+                display: flex; /* Visa desktop header */
+            }
+            .search-page {
+                padding: var(--content-margin-desktop); /* Större marginal på desktop */
+                padding-top: 0; /* Sticky hanterar detta */
+            }
+            .search-page-title {
+                margin-top: 0; /* Anpassa margin till desktop layout */
+                margin-bottom: 30px;
+                font-size: 3em;
+            }
+            .search-sticky-header {
+                padding-left: var(--content-margin-desktop);
+                padding-right: var(--content-margin-desktop);
+                padding-top: var(--desktop-header-height); /* Ge plats för desktop header */
+                margin-top: calc(-1 * var(--desktop-header-height)); /* Dra upp för att sticky ska fungera */
+            }
+            .listing-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 2-3 kolumner */
+            }
+            /* Overlay menu adjustments for desktop */
+            .overlay-menu {
+                padding: 0 var(--content-margin-desktop);
+                align-items: center; /* Centrera menyn horisontellt på desktop */
+            }
+            .overlay-menu .menu-content {
+                 text-align: center; /* Centrera rubrikerna för desktop mer */
+            }
+            .overlay-menu a, .overlay-menu .sub-links li a {
+                text-align: center; /* Centrera länktext för desktop */
+            }
+            .overlay-menu .close-menu {
+                top: var(--content-margin-desktop);
+                right: var(--content-margin-desktop);
             }
         }
     </style>
@@ -607,13 +980,28 @@
 
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
-    <header class="home-header">
-        <div class="home-profile-icon" id="open-profile-slideout">
+    <header class="desktop-header" id="desktop-header">
+        <a href="#" class="logo">Erik Olsson</a>
+        <nav>
+            <ul>
+                <li><a href="#" class="desktop-nav-link" data-page-target="search-page-main">Sök bostad</a></li>
+                <li><a href="#">Våra kontor</a></li>
+                <li><a href="#">Så funkar det</a></li>
+            </ul>
+        </nav>
+        <a href="#" class="cta-button">Börja sälja</a>
+        <div class="profile-icon" id="open-profile-slideout-desktop">
             <i class="fas fa-user"></i>
         </div>
     </header>
 
-    <section class="hero-section">
+    <header class="home-header-mobile" id="home-header-mobile">
+        <div class="home-profile-icon" id="open-profile-slideout-mobile">
+            <i class="fas fa-user"></i>
+        </div>
+    </header>
+
+    <section class="hero-section" id="home-page">
         <div class="hero-image"></div>
         <div class="hero-content">
             <h1>Välkommen till EO Market</h1>
@@ -621,13 +1009,103 @@
         </div>
     </section>
 
+    <main class="page-container" id="search-page-main">
+        <div class="search-sticky-header">
+            <h1 class="search-page-title">Sök bostad</h1>
+
+            <div class="search-tabs">
+                <button class="search-tab-button active" data-search-target="bostader">Bostäder 585</button>
+                <button class="search-tab-button" data-search-target="maklare">Mäklare 300</button>
+                <button class="search-tab-button" data-search-target="spekulanter">Spekulanter 585</button>
+            </div>
+
+            <div class="search-input-container">
+                <input type="text" placeholder="Sök områden, adresser...">
+                <i class="fas fa-sliders-h"></i>
+            </div>
+
+            <div class="filter-tags-container">
+                <span class="filter-tag">sommarstuga</span>
+                <span class="filter-tag">sekelskifte</span>
+                <span class="filter-tag active">Havsnära</span>
+                <span class="filter-tag">Barnvänligt</span>
+                <span class="filter-tag">Renoveringsobjekt</span>
+                <span class="filter-tag">Energi</span>
+                <span class="filter-tag">Balkong</span>
+                <span class="filter-tag">Pool</span>
+                <span class="filter-tag">Naturnära</span>
+                <span class="filter-tag">Bastukök</span>
+                <span class="filter-tag">Sommaridyll</span>
+                <span class="filter-tag">Sjöutsikt</span>
+            </div>
+
+            <div class="filter-options">
+                <button class="filter-option-button">
+                    <i class="fas fa-sliders-h"></i> Filter
+                </button>
+                <button class="filter-option-button">
+                    Sortera efter <i class="fas fa-angle-down"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="listing-grid">
+            <div class="listing-card">
+                <img src="https://images.unsplash.com/photo-1582268715875-e9185a97dd50?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxob3VzZSUyMGZhY2FkZXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                <span class="tag">Kommande</span>
+                <i class="far fa-heart heart-icon"></i>
+                <div class="listing-card-content">
+                    <h3>Katarina Östra Kyrkogårdsgränd 11</h3>
+                    <p>Villa, Område, Staden</p>
+                    <div class="details">
+                        <span>150 rum</span>
+                        <span>10 000 m²</span>
+                        <span>32 100 kr/mån</span>
+                    </div>
+                    <p style="font-weight: 600; margin-top: 10px;">230 000 000 kr</p>
+                </div>
+            </div>
+
+            <div class="listing-card">
+                <img src="https://images.unsplash.com/photo-1579707997931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw3fHxncmVlbiUyMGhvdXNlfGVufDB8fHx8fDE3MTk3NDU4MjN8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                <span class="tag">Kommande</span>
+                <i class="far fa-heart heart-icon"></i>
+                <div class="listing-card-content">
+                    <h3>Södra Gatan 5</h3>
+                    <p>Lägenhet, Centrum, Staden</p>
+                    <div class="details">
+                        <span>3 rum</span>
+                        <span>75 m²</span>
+                        <span>3 500 kr/mån</span>
+                    </div>
+                    <p style="font-weight: 600; margin-top: 10px;">3 500 000 kr</p>
+                </div>
+            </div>
+
+            <div class="listing-card">
+                <img src="https://images.unsplash.com/photo-1582046897931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw1fHxob3VzZSUyMGZhY2FkZXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                <span class="tag">Kommande</span>
+                <i class="far fa-heart heart-icon"></i>
+                <div class="listing-card-content">
+                    <h3>Norra Vägen 23</h3>
+                    <p>Radhus, Förort, Staden</p>
+                    <div class="details">
+                        <span>5 rum</span>
+                        <span>120 m²</span>
+                        <span>5 000 kr/mån</span>
+                    </div>
+                    <p style="font-weight: 600; margin-top: 10px;">5 200 000 kr</p>
+                </div>
+            </div>
+            </div>
+    </main>
+
     <nav id="bottom-nav">
-        <a href="#" class="nav-item active">
+        <a href="#" class="nav-item active" data-page-target="search-page-main">
             <i class="fas fa-search"></i>
             <span>Sök</span>
         </a>
-        <a href="#" class="nav-item">
-            <i class="fas fa-home"></i>
+        <a href="#" class="nav-item" data-page-target="home-page"> <i class="fas fa-home"></i>
             <span>Mina hem</span>
         </a>
         <a href="#" class="nav-item">
@@ -743,15 +1221,95 @@
     </aside>
 
     <script>
-        // --- Bottom Navigation Show/Hide on Scroll ---
-        let lastScrollY = window.scrollY;
+        // --- Page Navigation Logic (Home vs. Search Page) ---
+        const homePage = document.getElementById('home-page');
+        const searchPage = document.getElementById('search-page-main');
+        const desktopHeader = document.getElementById('desktop-header');
+        const mobileHeader = document.getElementById('home-header-mobile');
         const bottomNav = document.getElementById('bottom-nav');
 
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > lastScrollY && window.scrollY > 50) {
-                bottomNav.classList.add('hidden-nav');
+        function showPage(pageId) {
+            homePage.style.display = 'none';
+            searchPage.style.display = 'none';
+
+            if (pageId === 'home-page') {
+                homePage.style.display = 'flex'; // Use flex for hero content centering
+                mobileHeader.style.display = 'flex'; // Show mobile header for home
+                bottomNav.style.display = 'flex'; // Show bottom nav for home
+                desktopHeader.style.display = 'none'; // Hide desktop header
+            } else if (pageId === 'search-page-main') {
+                searchPage.style.display = 'block';
+                mobileHeader.style.display = 'none'; // Hide mobile header
+                bottomNav.style.display = 'flex'; // Still show bottom nav for search on mobile
+                // Desktop header visibility handled by CSS media query
+            }
+
+            // Update active state in bottom nav
+            navItems.forEach(item => {
+                if (item.dataset.pageTarget === pageId) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Initial page load (show home page)
+        showPage('home-page');
+
+        // Event listeners for page navigation from bottom nav
+        const navItems = document.querySelectorAll('#bottom-nav .nav-item');
+        navItems.forEach(item => {
+            if (item.dataset.pageTarget) {
+                item.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    showPage(this.dataset.pageTarget);
+                });
+            }
+        });
+
+        // Event listener for desktop nav link
+        const desktopNavSearchLink = document.querySelector('.desktop-nav-link[data-page-target="search-page-main"]');
+        if (desktopNavSearchLink) {
+            desktopNavSearchLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                showPage('search-page-main');
+            });
+        }
+
+        // --- Handle desktop header visibility based on screen width ---
+        function handleDesktopHeaderVisibility() {
+            if (window.innerWidth >= 769) {
+                desktopHeader.style.display = 'flex';
+                mobileHeader.style.display = 'none';
+                bottomNav.style.display = 'none';
+                // If currently on home page, switch to search page for desktop default
+                if (homePage.style.display === 'flex') {
+                    showPage('search-page-main'); // Desktop default is search page
+                }
             } else {
-                bottomNav.classList.remove('hidden-nav');
+                desktopHeader.style.display = 'none';
+                // Only show mobile header/bottom nav if we are on the home page or search page
+                if (homePage.style.display === 'flex' || searchPage.style.display === 'block') {
+                     mobileHeader.style.display = 'flex';
+                     bottomNav.style.display = 'flex';
+                }
+            }
+        }
+        window.addEventListener('resize', handleDesktopHeaderVisibility);
+        handleDesktopHeaderVisibility(); // Call on load
+
+
+        // --- Bottom Navigation Show/Hide on Scroll ---
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth <= 768) { // Only apply on mobile
+                if (window.scrollY > lastScrollY && window.scrollY > 50) {
+                    bottomNav.classList.add('hidden-nav');
+                } else {
+                    bottomNav.classList.remove('hidden-nav');
+                }
             }
             lastScrollY = window.scrollY;
         });
@@ -779,7 +1337,8 @@
         });
 
         // --- Profile Slide-out Menu Logic (White profile page) ---
-        const openProfileSlideoutBtn = document.getElementById('open-profile-slideout');
+        const openProfileSlideoutBtnMobile = document.getElementById('open-profile-slideout-mobile');
+        const openProfileSlideoutBtnDesktop = document.getElementById('open-profile-slideout-desktop');
         const profileSlideout = document.getElementById('profile-slideout');
         const closeProfileSlideoutBtn = document.getElementById('close-profile-slideout');
 
@@ -792,14 +1351,16 @@
             }
         }
 
-        openProfileSlideoutBtn.addEventListener('click', toggleProfileSlideout);
+        if (openProfileSlideoutBtnMobile) openProfileSlideoutBtnMobile.addEventListener('click', toggleProfileSlideout);
+        if (openProfileSlideoutBtnDesktop) openProfileSlideoutBtnDesktop.addEventListener('click', toggleProfileSlideout);
         closeProfileSlideoutBtn.addEventListener('click', toggleProfileSlideout);
 
-        // Close slideout if clicking outside (optional, but good UX)
         document.addEventListener('click', (event) => {
-            if (profileSlideout.classList.contains('show') &&
-                !profileSlideout.contains(event.target) &&
-                !openProfileSlideoutBtn.contains(event.target)) {
+            const isClickOutsideProfile = !profileSlideout.contains(event.target) &&
+                                        (!openProfileSlideoutBtnMobile || !openProfileSlideoutBtnMobile.contains(event.target)) &&
+                                        (!openProfileSlideoutBtnDesktop || !openProfileSlideoutBtnDesktop.contains(event.target));
+
+            if (profileSlideout.classList.contains('show') && isClickOutsideProfile) {
                 toggleProfileSlideout();
             }
         });
@@ -817,6 +1378,17 @@
 
                 const targetId = button.dataset.target;
                 document.getElementById(targetId).classList.add('active');
+            });
+        });
+
+        // --- Search Page Tabs Logic ---
+        const searchTabButtons = document.querySelectorAll('.search-tab-button');
+        searchTabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                searchTabButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                // You would typically load different content here based on the active tab
+                console.log('Active search tab:', this.dataset.searchTarget);
             });
         });
     </script>
