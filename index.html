@@ -44,9 +44,8 @@
             min-height: 120vh; /* Ensure scrollability */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            /* Padding sätts av JS baserat på desktop/mobil header */
-            padding-top: 0; /* Updated by JS */
-            padding-bottom: 0; /* Updated by JS */
+            padding-top: 0; /* Handled by JS */
+            padding-bottom: 0; /* Handled by JS */
         }
 
         /* --- Global Container for all pages to prevent horizontal overflow --- */
@@ -1290,7 +1289,7 @@
         const bottomNav = document.getElementById('bottom-nav');
         const pages = document.querySelectorAll('.page-container');
         const desktopProfileIcon = document.getElementById('desktopProfileIcon');
-        const bottomNavProfileIcon = document.getElementById('bottomNavProfileIcon'); // New ref for bottom nav profile
+        const bottomNavProfileIcon = document.getElementById('bottomNavProfileIcon');
         const profileSlideout = document.getElementById('profileSlideout');
         const closeProfileBtn = document.getElementById('closeProfile');
         const moreMenuToggle = document.getElementById('more-menu-toggle');
@@ -1311,7 +1310,7 @@
             } else {
                 bottomNavHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bottom-nav-height'));
                 document.body.style.paddingBottom = `${bottomNavHeight}px`;
-                headerHeight = 0; // No top header on mobile
+                headerHeight = 0; // No top header on mobile (mobile-header removed)
             }
             document.body.style.paddingTop = `${headerHeight}px`;
         }
@@ -1466,14 +1465,6 @@
                 toggleOverlayMenu(false);
             }
         });
-
-        // Handle body overflow when profile or overlay is open (initial load state)
-        // This is less critical now as menus are hidden by default and JS controls overflow.
-        // if (profileSlideout.classList.contains('show') || overlayMenu.classList.contains('show')) {
-        //     document.body.style.overflowY = 'hidden';
-        // } else {
-        //     document.body.style.overflowY = 'auto';
-        // }
 
     </script>
 </body>
