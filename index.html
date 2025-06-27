@@ -48,8 +48,8 @@
 
         /* --- Desktop Header (Erik Olsson logo etc.) --- */
         .desktop-header {
-            display: none; /* Dölj som standard, visas på desktop */
-            position: fixed; /* Bytte till fixed för att den ska ligga ovanpå och inte påverka body scroll */
+            display: none; /* Dölj som standard, visas på desktop via JS */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -124,15 +124,15 @@
 
         /* --- Mobile Header (Home Page) --- */
         .home-header-mobile {
-            display: flex; /* Visas som standard på mobil */
-            position: fixed; /* Bytte till fixed */
+            display: none; /* Dölj som standard, visas på mobil för home via JS */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             justify-content: flex-end;
             padding: var(--content-margin-mobile);
             z-index: 1001;
-            box-sizing: border-box; /* Viktigt för att paddingen inte ska öka bredden */
+            box-sizing: border-box;
         }
 
         .home-profile-icon {
@@ -157,21 +157,21 @@
 
         /* --- Page Containers --- */
         .page-container {
-            display: none; /* Hidden by default */
-            padding-top: var(--desktop-header-height); /* Desktop default to push content down */
+            display: none; /* Hidden by default, shown by JS */
+            padding-top: 0; /* Base, adjusted by JS */
         }
 
         #home-page {
-            min-height: 100vh; /* Se till att den täcker hela höjden */
+            min-height: 100vh;
             position: relative;
             overflow: hidden;
             display: flex;
-            flex-direction: column; /* Stapla content vertikalt */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             color: var(--color-black);
-            box-sizing: border-box; /* Paddingen inkluderas i höjden */
+            box-sizing: border-box;
         }
 
         #search-page-main {
@@ -181,7 +181,7 @@
 
         .hero-main-content {
             display: flex;
-            flex-direction: column; /* Standard vertikalt på mobil */
+            flex-direction: column;
             align-items: center;
             max-width: 90%;
             margin: 0 auto;
@@ -192,7 +192,7 @@
             animation: fadeIn 2s ease-out forwards;
             opacity: 0;
             text-align: center;
-            margin-bottom: 20px; /* Space between text and image on mobile */
+            margin-bottom: 20px;
         }
 
         .hero-content h1 {
@@ -212,12 +212,12 @@
         }
 
         .hero-content-image {
-            width: 100%; /* Full width on mobile */
-            max-width: 500px; /* Max width for image */
+            width: 100%;
+            max-width: 500px;
             border-radius: var(--border-radius-small);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             opacity: 0;
-            animation: fadeIn 2s ease-out forwards 0.5s; /* Fade in slightly later */
+            animation: fadeIn 2s ease-out forwards 0.5s;
         }
 
         /* --- "Sök Bostad" Page Content --- */
@@ -233,12 +233,12 @@
             z-index: 990;
             background-color: var(--color-white);
             padding-bottom: 10px; /* Space under sticky elements */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Lätt skugga för sticky effekt */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             transition: box-shadow var(--transition-duration);
             padding-left: var(--content-margin-mobile); /* Mobile padding */
             padding-right: var(--content-margin-mobile); /* Mobile padding */
-            box-sizing: border-box; /* Inkludera padding i bredden */
-            width: 100%; /* Viktigt för sticky */
+            box-sizing: border-box;
+            width: 100%;
         }
 
         .search-page-title {
@@ -579,7 +579,7 @@
 
         /* Min bostad Card (Säljläge) */
         .my-listing-card {
-            background-image: url('https://images.unsplash.com/photo-1549298495-9271c6d3c9f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw0fHxuYXR1cmUlMkBzY2FuZGluYXZpYW58ZW58MHx8fHwxNzE5NjkxMzQ1fDB8fHw&ixlib=rb-4.0.3&q=80&w=1080');
+            background-image: url('https://images.unsplash.com/photo-1549298495-9271c6d3c9f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw0fHxuYXR1cmUlMkBzY2FuZGluYXZpYW4uY29tXzE3MTk2OTEzNDVfMF98fHw&ixlib=rb-4.0.3&q=80&w=1080');
             background-size: cover;
             background-position: center;
             border-radius: var(--border-radius-small);
@@ -728,11 +728,11 @@
             width: 100%;
             background-color: var(--color-white);
             border-top: 1px solid var(--color-gray-light);
-            display: flex;
+            display: flex; /* Default to flex, hidden by JS on desktop */
             justify-content: space-around;
             padding: 10px 0;
             z-index: 1000;
-            transform: translateY(0); /* Ensure it's visible by default */
+            transform: translateY(0);
             transition: transform var(--transition-duration) ease-in-out;
             height: var(--bottom-nav-height);
             box-sizing: border-box;
@@ -874,17 +874,15 @@
         /* --- Responsive adjustments --- */
         @media (max-width: 768px) { /* Mobilspecifika inställningar */
             body {
-                padding-top: 0 !important; /* No desktop header on mobile */
+                padding-top: 0; /* No desktop header on mobile */
                 padding-bottom: var(--bottom-nav-height); /* Space for bottom nav */
             }
 
             .page-container#home-page {
-                padding-top: calc(40px + var(--content-margin-mobile)); /* Adjust for mobile header on home page */
-                /* Needs to be higher than content-margin-mobile */
-                /* Profile icon top:16px + height:40px, so around 56px needed */
+                /* Padding set dynamically by JS based on mobile header visibility */
             }
             .page-container#search-page-main {
-                padding-top: 0 !important; /* Managed by sticky header */
+                padding-top: 0; /* Managed by sticky header */
             }
             .search-sticky-header {
                 top: 0; /* Sticky to top of viewport on mobile */
@@ -955,19 +953,17 @@
 
         @media (min-width: 769px) { /* Desktop-specifika inställningar */
             body {
-                padding-bottom: 0 !important; /* No bottom nav on desktop */
-                padding-top: var(--desktop-header-height) !important; /* Give space for fixed desktop header */
+                padding-bottom: 0; /* No bottom nav on desktop */
+                padding-top: var(--desktop-header-height); /* Give space for fixed desktop header */
             }
-            .home-header-mobile, #bottom-nav {
-                display: none !important; /* Dölj mobil header och bottom nav */
-            }
+            /* bottom-nav and mobile-header are hidden by JS for desktop */
             .desktop-header {
-                display: flex !important; /* Visa desktop header */
+                display: flex; /* Show desktop header, hidden by JS on mobile */
             }
 
             .page-container#home-page {
-                padding-top: 0 !important; /* Desktop header handles top spacing */
-                flex-direction: row; /* Placera content sida vid sida */
+                padding-top: 0; /* Desktop header handles top spacing */
+                flex-direction: row;
                 padding-left: var(--content-margin-desktop);
                 padding-right: var(--content-margin-desktop);
                 justify-content: center;
@@ -975,61 +971,61 @@
             }
 
             .page-container#search-page-main {
-                padding: 0 !important; /* Managed by sticky header */
+                padding: 0; /* Managed by sticky header */
             }
 
             .hero-main-content {
-                flex-direction: row; /* Placera text och bild bredvid varandra */
+                flex-direction: row;
                 justify-content: center;
                 align-items: center;
-                gap: 50px; /* Space between text and image */
-                max-width: 1200px; /* Max bredd för hero content */
+                gap: 50px;
+                max-width: 1200px;
             }
             .hero-content-text {
                 text-align: left;
                 margin-bottom: 0;
                 flex: 1;
-                min-width: 400px; /* Ensure text block has enough space */
+                min-width: 400px;
             }
             .hero-content h1 {
-                font-size: 4.5em; /* Större rubrik på desktop */
+                font-size: 4.5em;
             }
             .hero-content p {
-                font-size: 1.5em; /* Större brödtext på desktop */
+                font-size: 1.5em;
             }
             .hero-content-image {
                 flex: 1;
-                min-width: 300px; /* Ensure image has enough space */
-                height: auto; /* Allow height to adjust */
+                min-width: 300px;
+                height: auto;
             }
 
             .search-page-content {
-                padding: var(--content-margin-desktop); /* Större marginal på desktop */
-                padding-top: 0; /* Managed by sticky header */
+                padding: var(--content-margin-desktop);
+                padding-top: 0;
             }
             .search-page-title {
-                margin-top: 0; /* Anpassa margin till desktop layout */
+                margin-top: 0;
                 margin-bottom: 30px;
                 font-size: 3em;
             }
             .search-sticky-header {
-                top: var(--desktop-header-height); /* Sticky under desktop header */
+                top: var(--desktop-header-height);
                 padding-left: var(--content-margin-desktop);
                 padding-right: var(--content-margin-desktop);
             }
             .listing-grid {
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 2-3 kolumner */
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             }
             /* Overlay menu adjustments for desktop */
             .overlay-menu {
                 padding: 0 var(--content-margin-desktop);
-                align-items: center; /* Centrera menyn horisontellt på desktop */
+                align-items: center;
             }
             .overlay-menu .menu-content {
-                 text-align: center; /* Centrera rubrikerna för desktop mer */
+                 text-align: center;
             }
             .overlay-menu a, .overlay-menu .sub-links li a {
-                text-align: center; /* Centrera länktext för desktop */
+                text-align: center;
             }
             .overlay-menu .close-menu {
                 top: var(--content-margin-desktop);
@@ -1117,7 +1113,7 @@
 
                 <div class="listing-grid">
                     <div class="listing-card">
-                        <img src="https://images.unsplash.com/photo-1582268715875-e9185a97dd50?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxob3VzZSUyMGZhY2FkZXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                        <img src="https://images.unsplash.com/photo-1582268715875-e9185a97dd50?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxob3VzZSUyMGZhY2FkZSwlMjBwYW5vcmFtYXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
                         <span class="tag">Kommande</span>
                         <i class="far fa-heart heart-icon"></i>
                         <div class="listing-card-content">
@@ -1133,7 +1129,7 @@
                     </div>
 
                     <div class="listing-card">
-                        <img src="https://images.unsplash.com/photo-1579707997931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw3fHxncmVlbiUyMGhvdXNlfGVufDB8fHx8fDE3MTk3NDU4MjN8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                        <img src="https://images.unsplash.com/photo-1579707997931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw3fHxncmVlbiUyMGhvdXNlJTJDJTIwcGFub3JhbWF8ZW58MHx8fHwxNzE5NzQ1ODIzfDA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
                         <span class="tag">Kommande</span>
                         <i class="far fa-heart heart-icon"></i>
                         <div class="listing-card-content">
@@ -1149,7 +1145,7 @@
                     </div>
 
                     <div class="listing-card">
-                        <img src="https://images.unsplash.com/photo-1582046897931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw1fHxob3VzZSUyMGZhY2FkZXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                        <img src="https://images.unsplash.com/photo-1582046897931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw1fHxob3VzZSUyMGZhY2FkZSwlMjBwYW5vcmFtYXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
                         <span class="tag">Kommande</span>
                         <i class="far fa-heart heart-icon"></i>
                         <div class="listing-card-content">
@@ -1316,11 +1312,12 @@
 
         // --- Page Navigation Logic (Home vs. Search Page) ---
         function showPage(pageId) {
-            homePage.style.display = 'none';
-            searchPage.style.display = 'none';
+            // Hide all page containers first
+            document.querySelectorAll('.page-container').forEach(page => page.style.display = 'none');
 
             currentPageId = pageId; // Update current page ID
 
+            // Show the target page
             if (pageId === 'home-page') {
                 homePage.style.display = 'flex'; // Use flex for hero content centering
             } else if (pageId === 'search-page-main') {
@@ -1328,6 +1325,7 @@
             }
 
             // Update active state in bottom nav
+            const navItems = document.querySelectorAll('#bottom-nav .nav-item'); // Moved inside to ensure it gets the element
             navItems.forEach(item => {
                 if (item.dataset.pageTarget === pageId) {
                     item.classList.add('active');
@@ -1340,63 +1338,70 @@
             window.scrollTo(0, 0); // Ensure scroll position is at top of new page
         }
 
-        // Initial page load (show home page)
-        showPage('home-page');
-
-        // Event listeners for page navigation from bottom nav
-        const navItems = document.querySelectorAll('#bottom-nav .nav-item');
-        navItems.forEach(item => {
-            if (item.dataset.pageTarget) {
-                item.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    showPage(this.dataset.pageTarget);
-                });
-            }
-        });
-
-        // Event listener for desktop nav search link
-        const desktopNavSearchLink = document.querySelector('.desktop-nav-link[data-page-target="search-page-main"]');
-        if (desktopNavSearchLink) {
-            desktopNavSearchLink.addEventListener('click', function(event) {
-                event.preventDefault();
-                showPage('search-page-main');
-            });
-        }
-
+        // Initial page load (show home page) - This will be called at the end
+        // showPage('home-page'); <-- remove this, call it after event listeners
 
         // --- Handle desktop header visibility and body padding on resize ---
         function handleResponsiveLayout() {
             if (window.innerWidth >= 769) { // Desktop
                 desktopHeader.style.display = 'flex';
-                mobileHeader.style.display = 'none';
-                bottomNav.style.display = 'none';
+                mobileHeader.style.display = 'none'; // Ensure mobile header is hidden
+                bottomNav.style.display = 'none'; // Hide bottom nav on desktop
+
                 // Adjust body padding-top for desktop header
                 document.body.style.paddingTop = 'var(--desktop-header-height)';
                 document.body.style.paddingBottom = '0'; // No bottom nav on desktop
 
                 // Adjust page container padding-top for desktop header
                 homePage.style.paddingTop = '0';
-                // No direct padding-top for searchPage needed, sticky header uses top: var(--desktop-header-height)
+                // searchPage doesn't need direct padding-top, sticky header handles it with top: var(--desktop-header-height)
             } else { // Mobile
-                desktopHeader.style.display = 'none';
+                desktopHeader.style.display = 'none'; // Hide desktop header on mobile
+                bottomNav.style.display = 'flex'; // Show bottom nav on mobile
                 document.body.style.paddingBottom = 'var(--bottom-nav-height)'; // Space for bottom nav on mobile
+                document.body.style.paddingTop = '0'; // No desktop header, no top padding on body
 
                 // Mobile header is only visible on home page
                 if (currentPageId === 'home-page') {
                     mobileHeader.style.display = 'flex';
                     homePage.style.paddingTop = 'calc(40px + var(--content-margin-mobile))'; // Adjust for mobile header
                 } else {
-                    mobileHeader.style.display = 'none';
+                    mobileHeader.style.display = 'none'; // Hide mobile header on other pages
                     homePage.style.paddingTop = '0'; // Reset if not home
                 }
-                bottomNav.style.display = 'flex'; // Always show bottom nav on mobile
-                document.body.style.paddingTop = '0'; // No desktop header, no top padding on body
-
-                // For search page, sticky header sets its own top
+                // For search page, sticky header sets its own top based on mobile (top:0)
             }
         }
+
+        // --- Event Listeners for Page Navigation ---
+        // Moved the querySelectorAll for navItems inside showPage, but it's also needed here
+        // for initial setup of event listeners.
+        document.addEventListener('DOMContentLoaded', () => {
+            const navItems = document.querySelectorAll('#bottom-nav .nav-item');
+            navItems.forEach(item => {
+                if (item.dataset.pageTarget) {
+                    item.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        showPage(this.dataset.pageTarget);
+                    });
+                }
+            });
+
+            const desktopNavSearchLink = document.querySelector('.desktop-nav-link[data-page-target="search-page-main"]');
+            if (desktopNavSearchLink) {
+                desktopNavSearchLink.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    showPage('search-page-main');
+                });
+            }
+
+            // Initial call to set the correct layout on load
+            showPage('home-page'); // Call showPage once the DOM is ready
+            handleResponsiveLayout(); // And handle responsive layout
+        });
+
+
         window.addEventListener('resize', handleResponsiveLayout);
-        handleResponsiveLayout(); // Call on load to set initial state
 
 
         // --- Bottom Navigation Show/Hide on Scroll (Mobile Only) ---
@@ -1424,13 +1429,16 @@
             setBodyOverflowHidden(overlayMenu.classList.contains('show'));
         }
 
-        moreButton.addEventListener('click', toggleOverlayMenu);
-        closeMenuButton.addEventListener('click', toggleOverlayMenu);
-        overlayMenu.addEventListener('click', (event) => {
-            if (event.target === overlayMenu) { // Only close if clicking directly on overlay background
-                toggleOverlayMenu();
-            }
-        });
+        if (moreButton) moreButton.addEventListener('click', toggleOverlayMenu);
+        if (closeMenuButton) closeMenuButton.addEventListener('click', toggleOverlayMenu);
+        if (overlayMenu) {
+            overlayMenu.addEventListener('click', (event) => {
+                if (event.target === overlayMenu) { // Only close if clicking directly on overlay background
+                    toggleOverlayMenu();
+                }
+            });
+        }
+
 
         // --- Profile Slide-out Menu Logic (White profile page) ---
         const openProfileSlideoutBtnMobile = document.getElementById('open-profile-slideout-mobile');
@@ -1446,14 +1454,16 @@
         // Add listeners for both mobile and desktop profile icons
         if (openProfileSlideoutBtnMobile) openProfileSlideoutBtnMobile.addEventListener('click', toggleProfileSlideout);
         if (openProfileSlideoutBtnDesktop) openProfileSlideoutBtnDesktop.addEventListener('click', toggleProfileSlideout);
-        closeProfileSlideoutBtn.addEventListener('click', toggleProfileSlideout);
+        if (closeProfileSlideoutBtn) closeProfileSlideoutBtn.addEventListener('click', toggleProfileSlideout);
 
-        // Close slideout if clicking outside
+        // Close slideout if clicking outside (more robust check needed)
         document.addEventListener('click', (event) => {
+            if (!profileSlideout || !openProfileSlideoutBtnMobile || !openProfileSlideoutBtnDesktop) return; // Prevent errors if elements not found
+
             const isProfileOpen = profileSlideout.classList.contains('show');
             const isClickInsideProfile = profileSlideout.contains(event.target);
-            const isClickOnOpenProfileBtnMobile = openProfileSlideoutBtnMobile && openProfileSlideoutBtnMobile.contains(event.target);
-            const isClickOnOpenProfileBtnDesktop = openProfileSlideoutBtnDesktop && openProfileSlideoutBtnDesktop.contains(event.target);
+            const isClickOnOpenProfileBtnMobile = openProfileSlideoutBtnMobile.contains(event.target);
+            const isClickOnOpenProfileBtnDesktop = openProfileSlideoutBtnDesktop.contains(event.target);
             const isClickOnAnyOpenBtn = isClickOnOpenProfileBtnMobile || isClickOnOpenProfileBtnDesktop;
 
             // If profile is open and click is outside the slideout and not on the buttons that open it
