@@ -3,126 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dölj Bottenfält vid Skroll</title>
+    <title>Minimalistisk Sida</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         body {
             margin: 0;
-            font-family: sans-serif;
-            padding-bottom: 60px; /* Ge utrymme för bottenmenyn så den inte täcker innehåll */
-            min-height: 150vh; /* Se till att det finns tillräckligt med innehåll att skrolla */
-            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            padding-bottom: 60px; /* Space for bottom nav */
+            min-height: 120vh; /* Ensure scrollability */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* --- Header & Profile --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1001; /* Above other content */
+        }
+
+        .header-title {
+            font-size: 1.5em;
+            font-weight: bold;
             color: #333;
         }
 
-        header {
-            background-color: #007bff;
-            color: white;
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            color: #fff;
+            overflow: hidden; /* For image */
+        }
+
+        .profile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- Content --- */
+        .content {
             padding: 20px;
-            text-align: center;
-            position: sticky;
-            top: 0;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            text-align: center; /* Center the lorem ipsum */
+        }
+
+        .content h2 {
+            margin-top: 0;
+            color: #007bff;
+        }
+
+        /* --- Bottom Navigation --- */
+        #bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            transition: transform 0.3s ease-in-out;
             z-index: 1000;
         }
 
-        .content {
-            padding: 20px;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 8px;
+        .nav-item {
+            text-align: center;
+            cursor: pointer;
+            padding: 5px 10px;
+            color: #555;
+            text-decoration: none;
+            transition: color 0.2s ease;
         }
 
-        #bottom-bar {
+        .nav-item:hover {
+            color: #007bff;
+        }
+
+        .nav-item i {
+            font-size: 1.4em;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .nav-item span {
+            font-size: 0.8em;
+        }
+
+        /* Hidden state for bottom nav */
+        .hidden-nav {
+            transform: translateY(100%);
+        }
+
+        /* --- Overlay Menu --- */
+        .overlay-menu {
             position: fixed;
-            bottom: 0;
+            top: 0;
+            left: 0;
             width: 100%;
-            background-color: #333;
-            color: white;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95); /* Semi-transparent black */
             display: flex;
-            justify-content: space-around;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            padding: 10px 0;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease-in-out; /* Mjuk övergång för transform */
-            z-index: 1000; /* Se till att den ligger över annat innehåll */
+            z-index: 2000; /* Above all other content */
+            transform: translateY(100%); /* Start hidden */
+            transition: transform 0.4s ease-in-out;
         }
 
-        #bottom-bar a {
+        .overlay-menu.show {
+            transform: translateY(0); /* Show menu */
+        }
+
+        .overlay-menu a {
             color: white;
             text-decoration: none;
-            padding: 5px 15px;
+            font-size: 2em;
+            padding: 15px 0;
+            width: 80%;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             transition: background-color 0.2s ease;
         }
 
-        #bottom-bar a:hover {
-            background-color: #555;
-            border-radius: 4px;
+        .overlay-menu a:last-child {
+            border-bottom: none;
         }
 
-        .hidden-bar {
-            transform: translateY(100%); /* Döljer fältet genom att flytta det nedåt */
+        .overlay-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
-        /* Enkel responsivitet */
-        @media (max-width: 600px) {
-            .content {
-                margin: 10px;
-                padding: 15px;
-            }
+        .close-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 2.5em;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
     <header>
-        <h1>Välkommen till Sidan</h1>
-        <p>Skrolla ner för att se bottenfältet försvinna!</p>
+        <div class="header-title">Min Sida</div>
+        <div class="profile-icon">
+            <i class="fas fa-user"></i> </div>
     </header>
 
     <div class="content">
-        <h2>Om Denna Demo</h2>
-        <p>Detta är en enkel demonstration av hur du kan implementera funktionalitet för att dölja webbläsarens bottenfält (eller en egen anpassad meny) när användaren skrollar nedåt på en mobil enhet, och sedan visa den igen när användaren skrollar uppåt.</p>
-
-        <h3>Hur det fungerar:</h3>
-        <ul>
-            <li>**JavaScript:** En funktion lyssnar på `scroll`-händelsen. Den jämför den aktuella skrollpositionen med den föregående.</li>
-            <li>**Skrolla Nedåt:** Om användaren skrollar nedåt, läggs CSS-klassen `.hidden-bar` till bottenfältets element.</li>
-            <li>**Skrolla Uppåt:** Om användaren skrollar uppåt, tas CSS-klassen `.hidden-bar` bort.</li>
-            <li>**CSS:** `.hidden-bar`-klassen använder `transform: translateY(100%);` för att flytta elementet helt utanför skärmen nedåt. En `transition` används för att göra animeringen mjuk och inte hackig.</li>
-        </ul>
-
-        <p>För att testa detta, öppna denna sida på en mobil enhet eller använd utvecklarverktygen i din webbläsare (oftast F12) för att simulera en mobil vy och skrolla sedan upp och ner.</p>
-
+        <h2>Min rena sida</h2>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Curabitur pretium tincidunt lacus, eget vulputate odio hendrerit in. Fusce at sapien et est pharetra bibendum. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
-        <p>Aenean nonummy hendrerit mauris. Phasellus porta. Fusce suscipit varius mi. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla dui. Fusce feugiat malesuada odio. Morbi nunc odio, gravida at, cursus nec, luctus a, lorem. Maecenas tristique orci ac sem. Duis ultricies pharetra magna. Donec accumsan malesuada orci. Donec sit amet eros.</p>
-        <p>Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue eget diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor at sed. Sed non quam. In vel mi sit amet arcu mollis auctor. Suspendisse pulvinar, est sed dictum volutpat, dolor diam sodales erat, non scelerisque sem purus eget est.</p>
-        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Curabitur pretium tincidunt lacus, eget vulputate odio hendrerit in. Fusce at sapien et est pharetra bibendum. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+        <p>Curabitur pretium tincidunt lacus, eget vulputate odio hendrerit in. Fusce at sapien et est pharetra bibendum. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum.</p>
     </div>
 
-    <div id="bottom-bar">
-        <a href="#">Hem</a>
+    <div id="bottom-nav">
+        <a href="#" class="nav-item">
+            <i class="fas fa-search"></i>
+            <span>Sök</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Köpa</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-tag"></i>
+            <span>Sälja</span>
+        </a>
+        <div class="nav-item" id="more-button">
+            <i class="fas fa-bars"></i>
+            <span>Mer</span>
+        </div>
+    </div>
+
+    <div class="overlay-menu" id="overlay-menu">
+        <span class="close-menu" id="close-menu">&times;</span>
         <a href="#">Sök</a>
-        <a href="#">Favoriter</a>
-        <a href="#">Inställningar</a>
+        <a href="#">Köpa</a>
+        <a href="#">Sälja</a>
+        <a href="#">Om Oss</a>
+        <a href="#">Kontakt</a>
     </div>
 
     <script>
+        // --- Skroll-funktion för bottenfältet ---
         let lastScrollY = window.scrollY;
-        const bottomBar = document.getElementById('bottom-bar');
+        const bottomNav = document.getElementById('bottom-nav');
 
         window.addEventListener('scroll', () => {
-            if (lastScrollY < window.scrollY) {
-                // Skrolla nedåt - dölj fältet
-                bottomBar.classList.add('hidden-bar');
-            } else {
-                // Skrolla uppåt - visa fältet
-                bottomBar.classList.remove('hidden-bar');
+            if (window.scrollY > lastScrollY && window.scrollY > 100) { // Skrolla nedåt, dölj
+                bottomNav.classList.add('hidden-nav');
+            } else { // Skrolla uppåt, visa
+                bottomNav.classList.remove('hidden-nav');
             }
             lastScrollY = window.scrollY;
+        });
+
+        // --- Hantera "Mer"-knappen och överläggsmenyn ---
+        const moreButton = document.getElementById('more-button');
+        const overlayMenu = document.getElementById('overlay-menu');
+        const closeMenuButton = document.getElementById('close-menu');
+
+        moreButton.addEventListener('click', () => {
+            overlayMenu.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+        });
+
+        closeMenuButton.addEventListener('click', () => {
+            overlayMenu.classList.remove('show');
+            document.body.style.overflow = ''; // Restore scrolling
+        });
+
+        // Optional: Close menu if clicking outside it (but still on the overlay background)
+        overlayMenu.addEventListener('click', (event) => {
+            if (event.target === overlayMenu) {
+                overlayMenu.classList.remove('show');
+                document.body.style.overflow = '';
+            }
         });
     </script>
 
