@@ -209,6 +209,26 @@
             margin-bottom: 20px;
         }
 
+        /* Animated text common styles */
+        .animated-text-line {
+            opacity: 0;
+            transform: translateY(20px); /* Start 20px below final position */
+            animation-fill-mode: backwards; /* Keep element hidden before animation */
+        }
+
+        /* Animation Keyframes for text slide-up */
+        @keyframes slide-up-fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
         .hero-content h1 {
             font-family: var(--font-body);
             font-size: 3.5em;
@@ -242,6 +262,24 @@
             /* VIKTIGT: Denna FÅR INTE ha overflow: hidden */
         }
 
+        /* Rubriken "Sök bostad" */
+        .search-page-title {
+            font-family: var(--font-display);
+            font-size: 2.5em;
+            font-weight: 400;
+            margin-top: 20px; /* Kan justeras för att ge lite luft överst */
+            margin-bottom: 10px; /* Mindre marginal till intro-texten */
+        }
+
+        /* Intro text under rubriken */
+        .search-intro-text {
+            font-size: 1em;
+            color: var(--color-gray-dark);
+            margin-bottom: 20px; /* Marginal under texten innan sticky-elementen börjar */
+            line-height: 1.5;
+        }
+
+
         .search-sticky-header {
             position: sticky;
             top: 0; /* Fäst till toppen av viewporten (eller närmsta scrollbara förälder utan overflow) */
@@ -255,14 +293,6 @@
             box-sizing: border-box;
             width: 100%;
             /* VIKTIGT: Ge den en bakgrundsfärg för att dölja innehållet under när den är sticky */
-        }
-
-        .search-page-title {
-            font-family: var(--font-display);
-            font-size: 2.5em;
-            font-weight: 400;
-            margin-top: 20px; /* Kan justeras för att ge lite luft överst */
-            margin-bottom: 20px;
         }
 
         .search-tabs {
@@ -889,6 +919,28 @@
             from { transform: scaleX(0); }
             to { transform: scaleX(1); }
         }
+        /* New: for animated text lines */
+        @keyframes slide-up-fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px); /* Start 20px below final position */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0); /* End at final position */
+            }
+        }
+
+        .animated-text-line {
+            opacity: 0;
+            transform: translateY(20px); /* Initial hidden state */
+            /* Animation applied by JS with delay, so no animation here directly */
+        }
+
+        .animated-text-line.animate {
+            animation: slide-up-fade-in 0.6s ease-out forwards;
+        }
+
 
         /* --- Responsive adjustments --- */
         @media (max-width: 768px) { /* Mobilspecifika inställningar */
@@ -897,17 +949,24 @@
                 padding-bottom: var(--bottom-nav-height); /* Utrymme för bottom nav */
             }
 
-            .search-sticky-header {
-                top: 0; /* Fäster direkt till toppen av mobilview */
-                /* padding-top: 20px; Om du vill ha luft mellan skärmkant och search header */
+            .search-page-content {
+                /* Padding för hela innehållet, inklusive rubriken */
+                padding: var(--content-margin-mobile);
             }
+
             .search-page-title {
-                margin-top: 0; /* No extra top margin on mobile, if it's the first element in sticky header */
+                margin-top: 20px; /* Luft över rubriken */
                 font-size: 2em;
             }
-            .search-page-content {
-                /* Ingen extra padding-top på mobil search-page-content, sticky header är top:0 */
-                padding-top: 0;
+
+            .search-intro-text {
+                font-size: 0.9em;
+            }
+
+            .search-sticky-header {
+                top: 0; /* Fäster direkt till toppen av mobilview */
+                padding-left: var(--content-margin-mobile);
+                padding-right: var(--content-margin-mobile);
             }
 
 
@@ -974,12 +1033,7 @@
                 padding-top: var(--desktop-header-height); /* Utrymme för fixed desktop header */
                 padding-bottom: 0; /* Ingen bottom nav på desktop */
             }
-            /* För search-sticky-header på desktop: den fäster vid toppen av viewporten. */
-            /* Eftersom body har padding-top pga desktop-headern, kommer search-sticky-header att fästa
-               precis under desktop-headern om den har top: 0; */
-            .search-sticky-header {
-                top: 0;
-            }
+
             .desktop-header {
                 display: flex; /* Show desktop header, hidden by JS on mobile */
             }
@@ -999,14 +1053,24 @@
 
             .search-page-content {
                 padding: var(--content-margin-desktop); /* Större padding på desktop */
-                padding-top: 0; /* För att den sticky-headern ska kunna "klättra upp" till top:0 */
             }
-
+            /* Rubriken är inte sticky, så den får ligga i vanlig flöde med sin egen marginal */
             .search-page-title {
-                margin-top: 0; /* No extra top margin on desktop, it's inside sticky header */
-                margin-bottom: 30px;
+                margin-top: 0; /* No extra top margin on desktop, it's inside content area */
+                margin-bottom: 15px; /* Justera marginal för desktop */
                 font-size: 3em;
             }
+            .search-intro-text {
+                font-size: 1.1em;
+                margin-bottom: 25px; /* Justera marginal för desktop */
+            }
+
+            .search-sticky-header {
+                top: 0; /* Fäster precis under desktop headern */
+                padding-left: var(--content-margin-desktop);
+                padding-right: var(--content-margin-desktop);
+            }
+
 
             .hero-main-content {
                 flex-direction: row;
@@ -1083,8 +1147,8 @@
         <section class="page-container" id="home-page">
             <div class="hero-main-content">
                 <div class="hero-content-text">
-                    <h1>Välkommen till Erik Olsson Fastighetsförmedling </h1>
-                    <p>Ett lite smartare mäkleri helt enkelt</p>
+                    <h1 class="animated-text-line">Välkommen till EO Market</h1>
+                    <p class="animated-text-line">Din nya plattform för att hitta och sälja bostäder.</p>
                 </div>
                 <img src="https://images.pexels.com/photos/32438148/pexels-photo-32438148.jpeg?_gl=1*1ev5dk9*_ga*MTE2MzIyMTA4OS4xNzM5NTQwNDg2*_ga_8JE65Q40S6*czE3NTEwMzQ1NzQkbzMzJGcxJHQxNzUxMDM0NTg4JGo0NiRsMCRoMA.." alt="Modern house" class="hero-content-image">
             </div>
@@ -1092,9 +1156,12 @@
 
         <main class="page-container" id="search-page-main">
             <div class="search-page-content">
-                <div class="search-sticky-header">
-                    <h1 class="search-page-title">Sök bostad</h1>
+                <h1 class="search-page-title animated-text-line">Sök bostad</h1>
+                <p class="search-intro-text animated-text-line">
+                    Använd kartan eller sökfältet för att hitta ditt nästa hem.
+                </p>
 
+                <div class="search-sticky-header">
                     <div class="search-tabs">
                         <button class="search-tab-button active" data-search-target="bostader">Bostäder 585</button>
                         <button class="search-tab-button" data-search-target="maklare">Mäklare 300</button>
@@ -1136,14 +1203,14 @@
                         <span class="tag">Kommande</span>
                         <i class="far fa-heart heart-icon"></i>
                         <div class="listing-card-content">
-                            <h3>Katarina Östra Kyrkogårdsgränd 11</h3>
-                            <p>Villa, Område, Staden</p>
-                            <div class="details">
+                            <h3 class="animated-text-line">Katarina Östra Kyrkogårdsgränd 11</h3>
+                            <p class="animated-text-line">Villa, Område, Staden</p>
+                            <div class="details animated-text-line">
                                 <span>150 rum</span>
                                 <span>10 000 m²</span>
                                 <span>32 100 kr/mån</span>
                             </div>
-                            <p style="font-weight: 600; margin-top: 10px;">230 000 000 kr</p>
+                            <p style="font-weight: 600; margin-top: 10px;" class="animated-text-line">230 000 000 kr</p>
                         </div>
                     </div>
 
@@ -1152,14 +1219,14 @@
                         <span class="tag">Kommande</span>
                         <i class="far fa-heart heart-icon"></i>
                         <div class="listing-card-content">
-                            <h3>Södra Gatan 5</h3>
-                            <p>Lägenhet, Centrum, Staden</p>
-                            <div class="details">
+                            <h3 class="animated-text-line">Södra Gatan 5</h3>
+                            <p class="animated-text-line">Lägenhet, Centrum, Staden</p>
+                            <div class="details animated-text-line">
                                 <span>3 rum</span>
                                 <span>75 m²</span>
                                 <span>3 500 kr/mån</span>
                             </div>
-                            <p style="font-weight: 600; margin-top: 10px;">3 500 000 kr</p>
+                            <p style="font-weight: 600; margin-top: 10px;" class="animated-text-line">3 500 000 kr</p>
                         </div>
                     </div>
 
@@ -1168,14 +1235,14 @@
                         <span class="tag">Kommande</span>
                         <i class="far fa-heart heart-icon"></i>
                         <div class="listing-card-content">
-                            <h3>Norra Vägen 23</h3>
-                            <p>Radhus, Förort, Staden</p>
-                            <div class="details">
+                            <h3 class="animated-text-line">Norra Vägen 23</h3>
+                            <p class="animated-text-line">Radhus, Förort, Staden</p>
+                            <div class="details animated-text-line">
                                 <span>5 rum</span>
                                 <span>120 m²</span>
                                 <span>5 000 kr/mån</span>
                             </div>
-                            <p style="font-weight: 600; margin-top: 10px;">5 200 000 kr</p>
+                            <p style="font-weight: 600; margin-top: 10px;" class="animated-text-line">5 200 000 kr</p>
                         </div>
                     </div>
                     <div class="listing-card">
@@ -1183,14 +1250,14 @@
                         <span class="tag">Kommande</span>
                         <i class="far fa-heart heart-icon"></i>
                         <div class="listing-card-content">
-                            <h3>Katarina Östra Kyrkogårdsgränd 12</h3>
-                            <p>Villa, Område, Staden</p>
-                            <div class="details">
+                            <h3 class="animated-text-line">Katarina Östra Kyrkogårdsgränd 12</h3>
+                            <p class="animated-text-line">Villa, Område, Staden</p>
+                            <div class="details animated-text-line">
                                 <span>150 rum</span>
                                 <span>10 000 m²</span>
                                 <span>32 100 kr/mån</span>
                             </div>
-                            <p style="font-weight: 600; margin-top: 10px;">230 000 000 kr</p>
+                            <p style="font-weight: 600; margin-top: 10px;" class="animated-text-line">230 000 000 kr</p>
                         </div>
                     </div>
                      <div class="listing-card">
@@ -1198,14 +1265,14 @@
                         <span class="tag">Kommande</span>
                         <i class="far fa-heart heart-icon"></i>
                         <div class="listing-card-content">
-                            <h3>Södra Gatan 6</h3>
-                            <p>Lägenhet, Centrum, Staden</p>
-                            <div class="details">
+                            <h3 class="animated-text-line">Södra Gatan 6</h3>
+                            <p class="animated-text-line">Lägenhet, Centrum, Staden</p>
+                            <div class="details animated-text-line">
                                 <span>3 rum</span>
                                 <span>75 m²</span>
                                 <span>3 500 kr/mån</span>
                             </div>
-                            <p style="font-weight: 600; margin-top: 10px;">3 500 000 kr</p>
+                            <p style="font-weight: 600; margin-top: 10px;" class="animated-text-line">3 500 000 kr</p>
                         </div>
                     </div>
                     <div class="listing-card">
@@ -1213,14 +1280,14 @@
                         <span class="tag">Kommande</span>
                         <i class="far fa-heart heart-icon"></i>
                         <div class="listing-card-content">
-                            <h3>Norra Vägen 24</h3>
-                            <p>Radhus, Förort, Staden</p>
-                            <div class="details">
+                            <h3 class="animated-text-line">Norra Vägen 24</h3>
+                            <p class="animated-text-line">Radhus, Förort, Staden</p>
+                            <div class="details animated-text-line">
                                 <span>5 rum</span>
                                 <span>120 m²</span>
                                 <span>5 000 kr/mån</span>
                             </div>
-                            <p style="font-weight: 600; margin-top: 10px;">5 200 000 kr</p>
+                            <p style="font-weight: 600; margin-top: 10px;" class="animated-text-line">5 200 000 kr</p>
                         </div>
                     </div>
                 </div>
@@ -1254,16 +1321,16 @@
     <div class="overlay-menu" id="overlay-menu">
         <span class="close-menu" id="close-menu">&times;</span>
         <div class="menu-content">
-            <a href="#">Sök bostad</a>
-            <a href="#">Hitta mäklare</a>
-            <a href="#">Här finns vi</a>
-            <a href="#">Så funkar det</a>
-            <a href="#">Sälj bostad</a>
+            <a href="#" class="animated-text-line">Sök bostad</a>
+            <a href="#" class="animated-text-line" style="animation-delay: 0.05s;">Hitta mäklare</a>
+            <a href="#" class="animated-text-line" style="animation-delay: 0.1s;">Här finns vi</a>
+            <a href="#" class="animated-text-line" style="animation-delay: 0.15s;">Så funkar det</a>
+            <a href="#" class="animated-text-line" style="animation-delay: 0.2s;">Sälj bostad</a>
             <ul class="sub-links">
-                <li><a href="#">Nyproduktion</a></li>
-                <li><a href="#">Utland</a></li>
-                <li><a href="#">Karriär</a></li>
-                <li><a href="#">Skapa bostadsbevakning</a></li>
+                <li><a href="#" class="animated-text-line" style="animation-delay: 0.25s;">Nyproduktion</a></li>
+                <li><a href="#" class="animated-text-line" style="animation-delay: 0.3s;">Utland</a></li>
+                <li><a href="#" class="animated-text-line" style="animation-delay: 0.35s;">Karriär</a></li>
+                <li><a href="#" class="animated-text-line" style="animation-delay: 0.4s;">Skapa bostadsbevakning</a></li>
             </ul>
         </div>
     </div>
@@ -1274,45 +1341,45 @@
         </div>
         <div class="profile-content">
             <div class="profile-top-header">
-                <div class="profile-initials">RK</div>
+                <div class="profile-initials animated-text-line">RK</div>
                 <div class="profile-info">
-                    <h1>Rebecca Karlsson</h1>
-                    <a href="#">Gå till min profil <i class="fas fa-chevron-right"></i></a>
+                    <h1 class="animated-text-line">Rebecca Karlsson</h1>
+                    <a href="#" class="animated-text-line">Gå till min profil <i class="fas fa-chevron-right"></i></a>
                 </div>
             </div>
 
             <div class="segmented-control">
-                <button class="segmented-button active" data-target="sell-mode-profile">Säljläge</button>
-                <button class="segmented-button" data-target="buy-mode-profile">Köpläge</button>
+                <button class="segmented-button active animated-text-line" data-target="sell-mode-profile">Säljläge</button>
+                <button class="segmented-button animated-text-line" data-target="buy-mode-profile">Köpläge</button>
             </div>
 
             <section id="sell-mode-profile" class="content-section active">
                 <div class="my-listing-card" onclick="window.location.href='https://unsplash.com/photos/white-concrete-house-near-green-tree-during-daytime-4ojhpgKpS68'">
                     <div class="card-content">
-                        <div class="label">Min bostad</div>
-                        <h3>Årstagogs Väg 9C</h3>
+                        <div class="label animated-text-line">Min bostad</div>
+                        <h3 class="animated-text-line">Årstagogs Väg 9C</h3>
                         <div class="card-stats">
-                            <span class="card-stat-tag">132 visningar</span>
-                            <span class="card-stat-tag">48 sparat</span>
+                            <span class="card-stat-tag animated-text-line">132 visningar</span>
+                            <span class="card-stat-tag animated-text-line">48 sparat</span>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right card-action-arrow"></i>
                 </div>
 
                 <ul class="action-list">
-                    <li class="action-list-item">
+                    <li class="action-list-item animated-text-line">
                         <i class="fas fa-bookmark"></i> Sälj bostad
                     </li>
-                    <li class="action-list-item">
+                    <li class="action-list-item animated-text-line">
                         <i class="fas fa-search"></i> Sök bostad
                     </li>
-                    <li class="action-list-item">
+                    <li class="action-list-item animated-text-line">
                         <i class="fas fa-briefcase"></i> Hitta mäklare
                     </li>
-                    <li class="action-list-item">
+                    <li class="action-list-item animated-text-line">
                         <i class="fas fa-users"></i> Hitta köpare
                     </li>
-                    <li class="action-list-item">
+                    <li class="action-list-item animated-text-line">
                         <i class="fas fa-sign-out-alt"></i> Logga ut
                     </li>
                 </ul>
@@ -1320,28 +1387,28 @@
 
             <section id="buy-mode-profile" class="content-section">
                 <div class="matches-header">
-                    <h2>Matchningar</h2>
-                    <a href="#">Alla <i class="fas fa-chevron-right"></i></a>
+                    <h2 class="animated-text-line">Matchningar</h2>
+                    <a href="#" class="animated-text-line">Alla <i class="fas fa-chevron-right"></i></a>
                 </div>
 
                 <ul class="action-list">
-                    <li class="action-list-item">
+                    <li class="action-list-item animated-text-line">
                         <i class="fas fa-home"></i> Mina hem
                     </li>
-                    <li class="action-list-item">
+                    <li class="action-list-item animated-text-line">
                         <i class="fas fa-heart"></i> Sparade bostäder
                     </li>
-                    <li class="action-list-item">
+                    <li class="action-list-item animated-text-line">
                         <i class="fas fa-bell"></i> Bevakningar
                     </li>
-                     <li class="action-list-item">
+                     <li class="action-list-item animated-text-line">
                         <i class="fas fa-sign-out-alt"></i> Logga ut
                     </li>
                 </ul>
 
                 <div style="padding-top: 30px;">
-                    <h2 style="font-family: var(--font-display); font-size: 1.4em; font-weight: 400; margin-bottom: 15px;">Nytt på EO Market</h2>
-                    <p style="font-size: 0.95em; color: var(--color-gray-dark);">
+                    <h2 style="font-family: var(--font-display); font-size: 1.4em; font-weight: 400; margin-bottom: 15px;" class="animated-text-line">Nytt på EO Market</h2>
+                    <p style="font-size: 0.95em; color: var(--color-gray-dark);" class="animated-text-line">
                         Här kommer spännande nyheter och uppdateringar från EO Market att visas.
                     </p>
                 </div>
@@ -1374,6 +1441,23 @@
             }
         }
 
+        // --- Animation Logic ---
+        function animateTextElements(containerElement) {
+            const elementsToAnimate = containerElement.querySelectorAll('.animated-text-line');
+            elementsToAnimate.forEach((el, index) => {
+                // Ensure element is initially hidden or reset from previous animation
+                el.classList.remove('animate');
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+
+                // Apply animation with a delay
+                setTimeout(() => {
+                    el.classList.add('animate');
+                }, index * 80); // 80ms delay per element (adjust as needed)
+            });
+        }
+
+
         // --- Page Navigation Logic (Home vs. Search Page) ---
         function showPage(pageId) {
             // Hide all page containers first
@@ -1382,19 +1466,30 @@
             currentPageId = pageId; // Update current page ID
 
             // Show the target page
+            let targetPageElement;
             if (pageId === 'home-page') {
+                targetPageElement = homePage;
                 homePage.style.display = 'flex'; // Use flex for hero content centering
             } else if (pageId === 'search-page-main') {
+                targetPageElement = searchPage;
                 searchPage.style.display = 'block';
             }
+
+            // Animate text elements on the new page
+            if (targetPageElement) {
+                animateTextElements(targetPageElement);
+            }
+
 
             // Update active state in bottom nav
             const navItems = document.querySelectorAll('#bottom-nav .nav-item');
             navItems.forEach(item => {
-                if (item.dataset.pageTarget === pageId) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
+                if (item.dataset.pageTarget) { // Check if data-page-target exists
+                    if (item.dataset.pageTarget === pageId) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
                 }
             });
 
@@ -1486,6 +1581,9 @@
         function toggleOverlayMenu() {
             overlayMenu.classList.toggle('show');
             setBodyOverflowHidden(overlayMenu.classList.contains('show'));
+            if (overlayMenu.classList.contains('show')) {
+                animateTextElements(overlayMenu);
+            }
         }
 
         if (moreButton) moreButton.addEventListener('click', toggleOverlayMenu);
@@ -1508,6 +1606,17 @@
         function toggleProfileSlideout() {
             profileSlideout.classList.toggle('show');
             setBodyOverflowHidden(profileSlideout.classList.contains('show'));
+            if (profileSlideout.classList.contains('show')) {
+                // Animate elements within the active profile section
+                const activeProfileSection = profileSlideout.querySelector('.content-section.active');
+                if (activeProfileSection) {
+                    animateTextElements(activeProfileSection);
+                }
+                // Animate elements in the top profile header
+                animateTextElements(profileSlideout.querySelector('.profile-top-header'));
+                // Animate segmented control buttons
+                animateTextElements(profileSlideout.querySelector('.segmented-control'));
+            }
         }
 
         // Add listeners for both mobile and desktop profile icons
@@ -1544,7 +1653,11 @@
                 button.classList.add('active');
 
                 const targetId = button.dataset.target;
-                document.getElementById(targetId).classList.add('active');
+                const targetSection = document.getElementById(targetId);
+                targetSection.classList.add('active');
+
+                // Animate text elements in the newly active section
+                animateTextElements(targetSection);
             });
         });
 
@@ -1565,7 +1678,8 @@
             let parentsWithOverflow = [];
             while (parent) {
                 const style = window.getComputedStyle(parent);
-                if (style.overflow !== 'visible' && style.overflow !== 'clip') { // Check for any non-visible overflow
+                // Check for any non-visible overflow that would clip sticky content
+                if (style.overflow !== 'visible' && style.overflow !== 'clip') {
                     parentsWithOverflow.push({ element: parent, overflow: style.overflow });
                 }
                 parent = parent.parentElement;
@@ -1587,7 +1701,7 @@
                         console.warn(p.element, 'Overflow:', p.overflow);
                     });
                 } else {
-                    console.log('.search-sticky-header har inga föräldrar med non-visible overflow. Problemet är troligen något annat.');
+                    console.log('.search-sticky-header har inga föräldrar med non-visible overflow.');
                 }
             }
         });
