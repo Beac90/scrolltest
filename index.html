@@ -1255,8 +1255,7 @@
 
 
         <nav id="bottom-nav">
-            <a href="#" class="nav-item active" data-page="search">
-                <i class="fas fa-search"></i>
+            <a href="#" class="nav-item active" data-page="search-main"> <i class="fas fa-search"></i>
                 <span>Sök</span>
             </a>
             <a href="#" class="nav-item" data-page="home">
@@ -1280,6 +1279,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const homePage = document.getElementById('home-page');
+            // OBS: Bytte ID från 'search-page' till 'search-page-main' för att matcha HTML-elementet
             const searchPageMain = document.getElementById('search-page-main');
             const bottomNav = document.getElementById('bottom-nav');
             const navItems = document.querySelectorAll('.nav-item');
@@ -1302,7 +1302,7 @@
                     document.querySelector('.desktop-header').style.display = 'none';
                     bottomNav.style.display = 'flex';
                     // Always show search page on load for mobile (as per image context)
-                    showPage('search');
+                    showPage('search-main'); // Använda 'search-main'
                 } else {
                     document.body.style.paddingTop = 'var(--desktop-header-height)';
                     document.body.style.paddingBottom = '0';
@@ -1310,7 +1310,7 @@
                     document.querySelector('.desktop-header').style.display = 'flex';
                     bottomNav.style.display = 'none';
                     // Show search page on load for desktop (as per image context)
-                    showPage('search');
+                    showPage('search-main'); // Använda 'search-main'
                 }
             }
 
@@ -1318,7 +1318,15 @@
                 document.querySelectorAll('.page-container').forEach(page => {
                     page.style.display = 'none';
                 });
-                document.getElementById(pageId + '-page').style.display = 'block';
+                // Felet uppstod här om ID:t inte matchade
+                const targetPage = document.getElementById(pageId); // Tog bort '-page' som lades till automatiskt
+                if (targetPage) {
+                    targetPage.style.display = 'block';
+                } else {
+                    console.error(`Error: Page with ID '${pageId}' not found.`);
+                    return; // Exit if page not found
+                }
+
 
                 navItems.forEach(item => {
                     if (item.dataset.page === pageId) {
@@ -1329,11 +1337,11 @@
                 });
 
                 // Update mobile header icons visibility based on page
-                if (pageId === 'home') {
+                if (pageId === 'home-page') { // OBS! Använder 'home-page' för HTML ID
                     // Specific profile icon for home page hero
                     document.getElementById('home-page-mobile-profile').style.display = 'flex';
                     document.getElementById('search-page-mobile-profile').style.display = 'none';
-                } else if (pageId === 'search') {
+                } else if (pageId === 'search-page-main') { // OBS! Använder 'search-page-main' för HTML ID
                      // Specific profile icon for search page
                     document.getElementById('home-page-mobile-profile').style.display = 'none';
                     document.getElementById('search-page-mobile-profile').style.display = 'flex';
@@ -1343,7 +1351,7 @@
             navItems.forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const page = item.dataset.page;
+                    const page = item.dataset.page; // 'search-main' eller 'home'
                     if (page) { // Only switch page if data-page exists
                         showPage(page);
                     }
@@ -1386,7 +1394,11 @@
             setInitialLayout();
             window.addEventListener('resize', setInitialLayout);
             // Ensure search page starts active for demonstration
-            showPage('search');
+            showPage('search-main'); // Viktigt att denna matchar data-page i nav-item
+            showPage('home-page'); // Starta med home-page för att testa animationen
+            // Korrigering: Standard ska vara 'search-main' vid start som i dina bilder
+            showPage('search-main');
+
 
              // Smooth fade-in for hero text on home page
             const animatedLines = document.querySelectorAll('.animated-text-line');
