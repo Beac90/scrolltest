@@ -3,18 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Välkommen</title>
+    <title>Min Profil & Navigation</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --color-black: #000000;
             --color-white: #FFFFFF;
+            --color-gray-dark: #333333;
+            --color-gray-medium: #888888;
+            --color-gray-light: #EEEEEE;
+            --color-orange: #C67F33; /* Färg från initialikon */
             --font-body: 'Inter', sans-serif;
+            --border-radius-small: 8px;
+            --transition-duration: 0.2s;
         }
 
         body {
@@ -22,142 +29,263 @@
             font-family: var(--font-body);
             background-color: var(--color-white);
             color: var(--color-black);
-            padding-bottom: 60px; /* Space for bottom nav */
-            min-height: 150vh; /* Ensure scrollability */
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            padding-bottom: 80px; /* Mer utrymme för bottennavigeringen */
+            min-height: 120vh; /* Se till att det finns innehåll att skrolla */
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased; /* För bättre typsnittsrendering */
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- Header & Profile --- */
-        header {
+        /* --- Header / Top Bar --- */
+        .top-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 20px 20px 10px;
             background-color: var(--color-white);
-            border-bottom: 1px solid #eee; /* Subtle separator */
-            position: sticky;
-            top: 0;
-            z-index: 1001;
         }
 
-        .header-title {
-            font-family: var(--font-body);
+        .profile-initials {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--color-orange); /* Från bildexemplet */
+            color: var(--color-white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: 1.8em;
-            font-weight: 500;
+            font-weight: 600;
+            margin-right: 15px;
+            flex-shrink: 0; /* Hindrar den från att krympa */
+        }
+
+        .profile-info {
+            flex-grow: 1;
+        }
+
+        .profile-info h1 {
+            font-size: 1.6em;
+            font-weight: 600;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .profile-info a {
+            font-size: 0.9em;
+            color: var(--color-gray-medium);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 2px;
+            transition: color var(--transition-duration);
+        }
+
+        .profile-info a:hover {
             color: var(--color-black);
         }
 
-        .profile-container {
-            position: relative; /* För att positionera profilmenyn */
+        .profile-info a i {
+            margin-left: 5px;
+            font-size: 0.8em;
         }
 
-        .profile-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--color-black);
+        /* --- Segmented Control (Säljläge / Köpläge) --- */
+        .segmented-control {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.4em;
-            color: var(--color-white);
-            overflow: hidden;
-            border: 1px solid var(--color-black);
-            box-sizing: border-box;
-            cursor: pointer; /* Indikerar att den är klickbar */
-        }
-        .profile-icon i {
-            color: var(--color-white);
+            border-bottom: 1px solid var(--color-gray-light);
+            margin-bottom: 20px;
         }
 
-        .profile-menu {
-            position: absolute;
-            top: calc(100% + 10px); /* Position under ikonen + lite mellanrum */
-            right: 0;
-            background-color: var(--color-black);
-            color: var(--color-white);
-            border-radius: 4px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            min-width: 180px;
-            overflow: hidden; /* För att dölja rundade hörn på länkar */
-            transform: translateY(-10px); /* Startposition för animering */
-            opacity: 0;
-            visibility: hidden; /* Dölj helt tills den visas */
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s ease-out;
-            z-index: 1002; /* Över header och andra element */
-        }
-
-        .profile-menu.show {
-            transform: translateY(0);
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .profile-menu a {
-            display: block;
+        .segmented-button {
+            flex: 1;
             padding: 12px 15px;
-            color: var(--color-white);
-            text-decoration: none;
-            font-family: var(--font-body);
-            font-size: 0.95em;
-            transition: background-color 0.2s ease;
+            text-align: center;
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--color-gray-medium);
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: color var(--transition-duration);
         }
 
-        .profile-menu a:hover {
-            background-color: #333; /* Lätt grå vid hover */
+        .segmented-button.active {
+            color: var(--color-black);
+            font-weight: 600;
         }
 
-        /* --- Hero Section --- */
-        .hero-section {
-            height: 50vh;
+        .segmented-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; /* Justera för att täcka den underliggande linjen */
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--color-black);
+            animation: slideInBottomLine 0.3s ease-out forwards;
+        }
+
+        /* --- Content Sections --- */
+        .content-section {
+            padding: 0 20px;
+            margin-bottom: 30px;
+            display: none; /* Dölj som standard */
+            animation: fadeInContent 0.4s ease-out forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Min bostad Card (Säljläge) */
+        .my-listing-card {
+            background-image: url('https://images.unsplash.com/photo-1579707997931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw3fHxncmVlbiUyMGhvdXNlfGVufDB8fHx8fDE3MTk3NDU4MjN8MA&ixlib=rb-4.0.3&q=80&w=1080'); /* Exempelbild på bostad */
+            background-size: cover;
+            background-position: center;
+            border-radius: var(--border-radius-small);
+            height: 180px;
             position: relative;
             overflow: hidden;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            flex-direction: column;
+            justify-content: flex-end;
+            color: var(--color-white);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            cursor: pointer; /* Indikerar att kortet är klickbart */
         }
 
-        .hero-image {
+        .my-listing-card::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://images.unsplash.com/photo-1549298495-9271c6d3c9f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw0fHxuYXR1cmUlMkBzY2FuZGluYXZpYW58ZW58MHx8fHwxNzE5NjkxMzQ1fDB8fHw&ixlib=rb-4.0.3&q=80&w=1080') center/cover no-repeat fixed;
-            z-index: -1;
-            animation: slideInFromTop 1.5s ease-out forwards;
-            filter: brightness(0.95);
+            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 50%);
+            z-index: 0;
         }
 
-        .hero-content {
+        .card-content {
             position: relative;
             z-index: 1;
-            padding: 20px;
-            animation: fadeIn 2s ease-out forwards;
-            opacity: 0;
+            padding: 15px 20px;
         }
 
-        .hero-content h1 {
-            font-family: var(--font-body);
-            font-size: 3em;
+        .card-content .label {
+            font-size: 0.8em;
+            font-weight: 500;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .card-content h3 {
+            font-family: serif; /* Ser ut som en serif font i bilden */
+            font-style: italic;
+            font-size: 1.8em;
             margin: 0 0 10px;
-            font-weight: 700;
-            color: var(--color-black);
+            line-height: 1.1;
         }
 
-        .hero-content p {
-            font-family: var(--font-body);
-            font-size: 1.1em;
-            max-width: 600px;
-            margin: 0 auto;
-            color: var(--color-black);
+        .card-stats {
+            display: flex;
+            gap: 10px;
+            font-size: 0.9em;
+            font-weight: 500;
         }
 
-        /* --- Empty Content Area (for scroll space) --- */
-        .content-spacer {
-            height: 80vh;
-            background-color: var(--color-white);
+        .card-stat-tag {
+            background-color: var(--color-orange); /* Orange färg från bilden */
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+         .card-action-arrow {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-white);
+            font-size: 1.5em;
+            z-index: 2;
+        }
+
+
+        /* Matchningar (Köpläge) */
+        .matches-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-right: 10px; /* För att matcha bildens utrymme */
+        }
+        .matches-header h2 {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin: 0;
+        }
+        .matches-header a {
+            color: var(--color-gray-medium);
+            text-decoration: none;
+            font-size: 0.9em;
+            display: inline-flex;
+            align-items: center;
+            transition: color var(--transition-duration);
+        }
+        .matches-header a:hover {
+            color: var(--color-black);
+        }
+        .matches-header a i {
+            margin-left: 5px;
+            font-size: 0.8em;
+        }
+
+        /* --- Action List --- */
+        .action-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .action-list-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--color-gray-light);
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--color-black);
+            cursor: pointer;
+            transition: background-color var(--transition-duration);
+            animation: slideInFromLeft 0.5s ease-out forwards; /* För animering av listan */
+            opacity: 0; /* Start hidden */
+        }
+        /* Delay för en "staggered" effekt */
+        .action-list-item:nth-child(1) { animation-delay: 0.1s; }
+        .action-list-item:nth-child(2) { animation-delay: 0.2s; }
+        .action-list-item:nth-child(3) { animation-delay: 0.3s; }
+        .action-list-item:nth-child(4) { animation-delay: 0.4s; }
+        .action-list-item:nth-child(5) { animation-delay: 0.5s; } /* Logga ut */
+
+
+        .action-list-item i {
+            font-size: 1.3em;
+            margin-right: 15px;
+            color: var(--color-gray-medium);
+            width: 25px; /* Säkerställ jämn ikonjustering */
+            text-align: center;
+        }
+
+        .action-list-item:hover {
+            background-color: var(--color-gray-light);
+        }
+
+        .action-list-item:last-child {
+            border-bottom: none; /* Ingen linje på sista elementet */
+            color: #D32F2F; /* Röd färg för logga ut */
+        }
+        .action-list-item:last-child i {
+            color: #D32F2F;
         }
 
         /* --- Bottom Navigation --- */
@@ -167,37 +295,49 @@
             left: 0;
             width: 100%;
             background-color: var(--color-white);
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--color-gray-light);
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
-            transition: transform 0.3s ease-in-out;
             z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+            height: 70px; /* Högre för att rymma både ikon och text */
+            box-sizing: border-box; /* Inkludera padding i höjden */
         }
 
         .nav-item {
             text-align: center;
             cursor: pointer;
-            padding: 5px 10px;
-            color: var(--color-black);
+            padding: 5px 0;
+            color: var(--color-gray-medium);
             text-decoration: none;
-            transition: color 0.2s ease;
+            transition: color var(--transition-duration);
             font-family: var(--font-body);
             font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1; /* För att fördela utrymmet jämnt */
+        }
+
+        .nav-item.active {
+            color: var(--color-black); /* Aktivt objekt svart */
         }
 
         .nav-item:hover {
-            color: #555;
+            color: var(--color-black);
         }
 
         .nav-item i {
             font-size: 1.4em;
             display: block;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
         }
 
         .nav-item span {
-            font-size: 0.8em;
+            font-size: 0.75em; /* Mindre text under ikonerna */
+            white-space: nowrap; /* Förhindra radbrytning */
         }
 
         /* Hidden state for bottom nav */
@@ -205,7 +345,7 @@
             transform: translateY(100%);
         }
 
-        /* --- Overlay Menu --- */
+        /* --- Overlay Menu (för "Mer" i bottom nav) --- */
         .overlay-menu {
             position: fixed;
             top: 0;
@@ -227,16 +367,16 @@
         }
 
         .overlay-menu a {
-            font-family: var(--font-body);
+            font-family: var(--font-body); /* Använd Inter */
             color: var(--color-white);
             text-decoration: none;
-            font-size: 2.2em;
+            font-size: 2em; /* Mindre än förra versionen men fortfarande stor */
             padding: 15px 0;
             width: 80%;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: background-color 0.2s ease, color 0.2s ease;
-            font-weight: 700;
+            transition: background-color var(--transition-duration), color var(--transition-duration);
+            font-weight: 600;
         }
 
         .overlay-menu a:last-child {
@@ -253,15 +393,15 @@
             top: 20px;
             right: 20px;
             color: var(--color-white);
-            font-size: 2.8em;
+            font-size: 2.5em;
             cursor: pointer;
             line-height: 1;
         }
 
         /* --- Animations --- */
-        @keyframes slideInFromTop {
+        @keyframes slideInFromBottom {
             from {
-                transform: translateY(-100%);
+                transform: translateY(100%);
                 opacity: 0;
             }
             to {
@@ -270,7 +410,7 @@
             }
         }
 
-        @keyframes fadeIn {
+        @keyframes fadeInContent {
             from {
                 opacity: 0;
             }
@@ -279,30 +419,73 @@
             }
         }
 
+        @keyframes slideInBottomLine {
+            from {
+                transform: scaleX(0);
+            }
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        @keyframes slideInFromLeft {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
         /* Responsive adjustments */
-        @media (max-width: 600px) {
-            .header-title {
-                font-size: 1.5em;
+        @media (max-width: 480px) {
+            .top-header {
+                padding: 15px 15px 5px;
             }
-            .hero-content h1 {
-                font-size: 2.2em;
+            .profile-initials {
+                width: 50px;
+                height: 50px;
+                font-size: 1.6em;
             }
-            .hero-content p {
+            .profile-info h1 {
+                font-size: 1.4em;
+            }
+            .profile-info a {
+                font-size: 0.8em;
+            }
+            .segmented-button {
+                padding: 10px 10px;
                 font-size: 0.9em;
             }
-            .profile-menu {
-                min-width: 150px; /* Mindre på små skärmar */
+            .my-listing-card {
+                height: 160px;
             }
-            .profile-menu a {
-                padding: 10px 12px;
+            .card-content h3 {
+                font-size: 1.6em;
+            }
+            .card-stats {
+                font-size: 0.8em;
+            }
+            .action-list-item {
                 font-size: 0.9em;
-            }
-            .overlay-menu a {
-                font-size: 1.8em;
                 padding: 12px 0;
             }
+            .action-list-item i {
+                font-size: 1.2em;
+            }
+            .nav-item i {
+                font-size: 1.2em;
+            }
+            .nav-item span {
+                font-size: 0.7em;
+            }
+            .overlay-menu a {
+                font-size: 1.6em;
+            }
             .close-menu {
-                font-size: 2.2em;
+                font-size: 2em;
             }
         }
     </style>
@@ -311,110 +494,176 @@
 
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
-    <header>
-        <div class="header-title">Välkommen</div>
-        <div class="profile-container"> <div class="profile-icon" id="profile-icon">
-                <i class="fas fa-user"></i>
-                </div>
-            <div class="profile-menu" id="profile-menu">
-                <a href="#"><i class="fas fa-cog"></i> Inställningar</a>
-                <a href="#"><i class="fas fa-heart"></i> Sparade bostäder</a>
-                <a href="#"><i class="fas fa-bell"></i> Bevakningar</a>
-                <a href="#"><i class="fas fa-sign-out-alt"></i> Logga ut</a>
-            </div>
+    <header class="top-header">
+        <div class="profile-initials">RK</div>
+        <div class="profile-info">
+            <h1>Rebecca Karlsson</h1>
+            <a href="#">Gå till min profil <i class="fas fa-chevron-right"></i></a>
         </div>
     </header>
 
-    <section class="hero-section">
-        <div class="hero-image"></div>
-        <div class="hero-content">
-            <h1>Minimalistisk Design</h1>
-            <p>Ett rent uttryck för funktion och estetik.</p>
-        </div>
-    </section>
+    <div class="segmented-control">
+        <button class="segmented-button active" data-target="sell-mode">Säljläge</button>
+        <button class="segmented-button" data-target="buy-mode">Köpläge</button>
+    </div>
 
-    <div class="content-spacer"></div>
+    <main class="page-content">
+        <section id="sell-mode" class="content-section active">
+            <div class="my-listing-card" onclick="window.location.href='https://unsplash.com/photos/white-concrete-house-near-green-tree-during-daytime-4ojhpgKpS68'">
+                <div class="card-content">
+                    <div class="label">Min bostad</div>
+                    <h3>Årstagogs Väg 9C</h3>
+                    <div class="card-stats">
+                        <span class="card-stat-tag">132 visningar</span>
+                        <span class="card-stat-tag">48 sparat</span>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right card-action-arrow"></i>
+            </div>
 
-    <div id="bottom-nav">
-        <a href="#" class="nav-item">
+            <ul class="action-list">
+                <li class="action-list-item">
+                    <i class="fas fa-bookmark"></i> Sälj bostad
+                </li>
+                <li class="action-list-item">
+                    <i class="fas fa-search"></i> Sök bostad
+                </li>
+                <li class="action-list-item">
+                    <i class="fas fa-briefcase"></i> Hitta mäklare
+                </li>
+                <li class="action-list-item">
+                    <i class="fas fa-users"></i> Hitta köpare
+                </li>
+                <li class="action-list-item">
+                    <i class="fas fa-sign-out-alt"></i> Logga ut
+                </li>
+            </ul>
+        </section>
+
+        <section id="buy-mode" class="content-section">
+            <div class="matches-header">
+                <h2>Matchningar</h2>
+                <a href="#">Alla <i class="fas fa-chevron-right"></i></a>
+            </div>
+
+            <ul class="action-list">
+                <li class="action-list-item">
+                    <i class="fas fa-home"></i> Mina hem
+                </li>
+                <li class="action-list-item">
+                    <i class="fas fa-heart"></i> Sparade bostäder
+                </li>
+                <li class="action-list-item">
+                    <i class="fas fa-bell"></i> Bevakningar
+                </li>
+                 <li class="action-list-item">
+                    <i class="fas fa-sign-out-alt"></i> Logga ut
+                </li>
+            </ul>
+
+            <div style="padding-top: 30px;">
+                <h2 style="font-size: 1.4em; font-weight: 600; margin-bottom: 15px;">Nytt på EO Market</h2>
+                <p style="font-size: 0.95em; color: var(--color-gray-dark);">
+                    Här kommer spännande nyheter och uppdateringar att visas.
+                </p>
+                </div>
+        </section>
+    </main>
+
+
+    <nav id="bottom-nav">
+        <a href="#" class="nav-item active">
             <i class="fas fa-search"></i>
             <span>Sök</span>
         </a>
         <a href="#" class="nav-item">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Köpa</span>
+            <i class="fas fa-home"></i>
+            <span>Mina hem</span>
         </a>
         <a href="#" class="nav-item">
-            <i class="fas fa-tag"></i>
-            <span>Sälja</span>
+            <i class="fas fa-fire"></i>
+            <span>Matchningar</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Mäklare</span>
         </a>
         <div class="nav-item" id="more-button">
             <i class="fas fa-bars"></i>
             <span>Mer</span>
         </div>
-    </div>
+    </nav>
 
     <div class="overlay-menu" id="overlay-menu">
         <span class="close-menu" id="close-menu">&times;</span>
-        <a href="#">Sök</a>
-        <a href="#">Köpa</a>
-        <a href="#">Sälja</a>
-        <a href="#">Om Oss</a>
-        <a href="#">Kontakt</a>
+        <a href="#"><i class="fas fa-search"></i> Sök</a>
+        <a href="#"><i class="fas fa-home"></i> Mina hem</a>
+        <a href="#"><i class="fas fa-fire"></i> Matchningar</a>
+        <a href="#"><i class="fas fa-users"></i> Mäklare</a>
+        <a href="#"><i class="fas fa-briefcase"></i> Hitta mäklare</a>
+        <a href="#"><i class="fas fa-bookmark"></i> Sälj bostad</a>
+        <a href="#"><i class="fas fa-sign-out-alt"></i> Logga ut</a>
     </div>
 
     <script>
-        // --- Skroll-funktion för bottenfältet ---
+        // --- Bottom Navigation Show/Hide on Scroll ---
         let lastScrollY = window.scrollY;
         const bottomNav = document.getElementById('bottom-nav');
 
         window.addEventListener('scroll', () => {
-            if (window.scrollY > lastScrollY && window.scrollY > 100) { // Skrolla nedåt, dölj
+            // Only hide if scrolling down AND past a certain threshold (e.g., 50px)
+            if (window.scrollY > lastScrollY && window.scrollY > 50) {
                 bottomNav.classList.add('hidden-nav');
-            } else { // Skrolla uppåt, visa
+            } else {
                 bottomNav.classList.remove('hidden-nav');
             }
             lastScrollY = window.scrollY;
         });
 
-        // --- Hantera "Mer"-knappen och överläggsmenyn ---
+        // --- Toggle Overlay Menu ("Mer" button) ---
         const moreButton = document.getElementById('more-button');
         const overlayMenu = document.getElementById('overlay-menu');
         const closeMenuButton = document.getElementById('close-menu');
 
-        moreButton.addEventListener('click', () => {
-            overlayMenu.classList.add('show');
-            document.body.style.overflow = 'hidden'; // Förhindra skroll på bakgrunden
-        });
+        function toggleOverlayMenu() {
+            overlayMenu.classList.toggle('show');
+            if (overlayMenu.classList.contains('show')) {
+                document.body.style.overflow = 'hidden'; // Prevent background scroll
+            } else {
+                document.body.style.overflow = ''; // Restore scroll
+            }
+        }
 
-        closeMenuButton.addEventListener('click', () => {
-            overlayMenu.classList.remove('show');
-            document.body.style.overflow = ''; // Återställ skroll
-        });
-
-        // Valfritt: Stäng meny om man klickar utanför länkar men på överlägget
+        moreButton.addEventListener('click', toggleOverlayMenu);
+        closeMenuButton.addEventListener('click', toggleOverlayMenu);
         overlayMenu.addEventListener('click', (event) => {
-            if (event.target === overlayMenu) {
-                overlayMenu.classList.remove('show');
-                document.body.style.overflow = '';
+            if (event.target === overlayMenu) { // Close if clicking outside menu content
+                toggleOverlayMenu();
             }
         });
 
-        // --- Hantera profilmenyn ---
-        const profileIcon = document.getElementById('profile-icon');
-        const profileMenu = document.getElementById('profile-menu');
+        // --- Segmented Control Logic ---
+        const segmentedButtons = document.querySelectorAll('.segmented-button');
+        const contentSections = document.querySelectorAll('.content-section');
 
-        profileIcon.addEventListener('click', (event) => {
-            profileMenu.classList.toggle('show'); // Växlar 'show' klassen
-            event.stopPropagation(); // Förhindra att klicket propagerar till document
+        segmentedButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Deactivate current active button and section
+                document.querySelector('.segmented-button.active').classList.remove('active');
+                document.querySelector('.content-section.active').classList.remove('active');
+
+                // Activate clicked button
+                button.classList.add('active');
+
+                // Activate corresponding content section
+                const targetId = button.dataset.target;
+                document.getElementById(targetId).classList.add('active');
+            });
         });
 
-        // Stäng profilmenyn om man klickar någon annanstans på sidan
-        document.addEventListener('click', (event) => {
-            if (!profileIcon.contains(event.target) && !profileMenu.contains(event.target)) {
-                profileMenu.classList.remove('show');
-            }
-        });
+        // --- Set Active Nav Item based on initial load (optional, for real apps) ---
+        // For this demo, 'Sök' is active by default in CSS and HTML.
+        // If you were on a specific page, you'd add logic here to set the active state.
     </script>
 
 </body>
