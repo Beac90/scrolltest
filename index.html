@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+  <title>Scroll Test</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100dvh;
+      height: 100%;
+      overflow-x: hidden;
+      font-family: sans-serif;
+    }
+    .bottom-nav {
+      position: sticky;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-around;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+    }
+    button {
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div style="height: 200vh; padding: 1rem;">
+    <h1>Scrolla ner</h1>
+    <p>Bottom-nav kommer att synas bättre när browser UI försvinner.</p>
+  </div>
+  <div class="bottom-nav">
+    <button>Home</button>
+    <button>Sök</button>
+    <button>Logga in</button>
+  </div>
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        window.scrollTo(0, 1);
+      }, 50);
+    });
+  </script>
+</body>
+</html>
