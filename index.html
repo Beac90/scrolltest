@@ -9,7 +9,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -20,6 +20,7 @@
             --color-gray-light: #EEEEEE;
             --color-orange: #C67F33; /* Färg från initialikon */
             --font-body: 'Inter', sans-serif;
+            --font-display: 'Playfair Display', serif; /* Ny font för rubriker i overlay-menyn */
             --border-radius-small: 8px;
             --transition-duration: 0.3s;
         }
@@ -38,29 +39,28 @@
 
         /* --- Header for Home Page (Hero Section) --- */
         .home-header {
-            position: fixed; /* Fixed position */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             display: flex;
-            justify-content: flex-end; /* Push profile icon to the right */
+            justify-content: flex-end;
             padding: 20px;
-            z-index: 1001; /* Above hero image */
+            z-index: 1001;
         }
 
-        /* Profile Icon on Home Page */
         .home-profile-icon {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: rgba(0,0,0,0.5); /* Slightly transparent black */
+            background-color: rgba(0,0,0,0.5);
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 1.4em;
             color: var(--color-white);
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.3); /* Subtle white border */
+            border: 1px solid rgba(255,255,255,0.3);
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: background-color var(--transition-duration);
         }
@@ -69,17 +69,16 @@
             background-color: var(--color-black);
         }
 
-
         /* --- Hero Section (Home Page) --- */
         .hero-section {
-            height: 100vh; /* Full viewport height */
+            height: 100vh;
             position: relative;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
-            color: var(--color-black); /* Textfärg på hero-sektionen */
+            color: var(--color-black);
         }
 
         .hero-image {
@@ -117,21 +116,21 @@
             color: var(--color-black);
         }
 
-        /* --- Full-height Slide-out Profile Menu (replaces overlay-menu concept for profile) --- */
+        /* --- Full-height Slide-out Profile Menu (white, from right) --- */
         .profile-slideout {
             position: fixed;
             top: 0;
             right: 0;
-            width: 100%; /* Full width on small screens */
-            max-width: 400px; /* Max width on larger screens */
+            width: 100%;
+            max-width: 375px; /* Nättare bredd för profilsidan */
             height: 100%;
             background-color: var(--color-white);
             box-shadow: -5px 0 15px rgba(0,0,0,0.1);
             z-index: 2000;
-            transform: translateX(100%); /* Start off-screen to the right */
+            transform: translateX(100%);
             transition: transform var(--transition-duration) ease-out;
-            overflow-y: auto; /* Enable scrolling for content */
-            padding-bottom: 80px; /* Space for potential fixed elements inside if needed */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* För mjukare scroll på iOS */
         }
 
         .profile-slideout.show {
@@ -139,7 +138,7 @@
         }
 
         .profile-slideout .close-btn {
-            position: sticky; /* Sticky to top */
+            position: sticky;
             top: 0;
             left: 0;
             background-color: var(--color-white);
@@ -149,26 +148,25 @@
             color: var(--color-black);
             font-size: 2.5em;
             cursor: pointer;
-            z-index: 2001; /* Above profile content */
+            z-index: 2001;
             border-bottom: 1px solid var(--color-gray-light);
             box-sizing: border-box;
         }
         .profile-slideout .close-btn i {
-            font-size: 0.8em; /* Slightly smaller than original overlay close icon */
+            font-size: 0.8em;
         }
 
-
-        /* --- Profile Content (copied from previous structure) --- */
         .profile-content {
-            padding: 20px;
-            padding-top: 0; /* Already has padding from close-btn */
+            padding: 0 20px 20px; /* Mer kontrollerad padding för nättare utseende */
         }
 
-        .profile-content .profile-top-header { /* Renamed to avoid conflict with .top-header */
+        .profile-content .profile-top-header {
             display: flex;
             align-items: center;
-            padding-top: 10px; /* Additional top padding for content */
-            padding-bottom: 10px;
+            padding-top: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--color-gray-light); /* Enkel linje */
+            margin-bottom: 20px;
         }
 
         .profile-content .profile-initials {
@@ -186,13 +184,10 @@
             flex-shrink: 0;
         }
 
-        .profile-content .profile-info {
-            flex-grow: 1;
-        }
-
         .profile-content .profile-info h1 {
+            font-family: var(--font-display); /* Använd Playfair för namn */
             font-size: 1.6em;
-            font-weight: 600;
+            font-weight: 400; /* Lättare vikt */
             margin: 0;
             line-height: 1.2;
         }
@@ -219,7 +214,7 @@
         .profile-content .segmented-control {
             display: flex;
             border-bottom: 1px solid var(--color-gray-light);
-            margin-top: 20px; /* Add some space */
+            margin-top: 0; /* Tar bort extra mellanrum här */
             margin-bottom: 20px;
         }
 
@@ -254,7 +249,7 @@
         }
 
         .profile-content .content-section {
-            padding: 0; /* Redan padding i .profile-content */
+            padding: 0;
             margin-bottom: 30px;
             display: none;
             animation: fadeInContent 0.4s ease-out forwards;
@@ -266,7 +261,7 @@
 
         /* Min bostad Card (Säljläge) */
         .my-listing-card {
-            background-image: url('https://images.unsplash.com/photo-1579707997931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw3fHxncmVlbiUyMGhvdXNlfGVufDB8fHx8fDE3MTk3NDU4MjN8MA&ixlib=rb-4.0.3&q=80&w=1080');
+            background-image: url('https://images.unsplash.com/photo-1549298495-9271c6d3c9f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw0fHxuYXR1cmUlMkBzY2FuZGluYXZpYW58ZW58MHx8fHwxNzE5NjkxMzQ1fDB8fHw&ixlib=rb-4.0.3&q=80&w=1080'); /* Uppdaterad bild till den du länkade */
             background-size: cover;
             background-position: center;
             border-radius: var(--border-radius-small);
@@ -307,7 +302,7 @@
         }
 
         .card-content h3 {
-            font-family: serif;
+            font-family: var(--font-display); /* Använd Playfair för Årstagogs Väg 9C */
             font-style: italic;
             font-size: 1.8em;
             margin: 0 0 10px;
@@ -336,7 +331,6 @@
             z-index: 2;
         }
 
-
         /* Matchningar (Köpläge) */
         .matches-header {
             display: flex;
@@ -346,8 +340,9 @@
             padding-right: 10px;
         }
         .matches-header h2 {
+            font-family: var(--font-display); /* Använd Playfair för Matchningar */
             font-size: 1.4em;
-            font-weight: 600;
+            font-weight: 400; /* Lättare vikt */
             margin: 0;
         }
         .matches-header a {
@@ -383,8 +378,7 @@
             color: var(--color-black);
             cursor: pointer;
             transition: background-color var(--transition-duration);
-            /* Animations will be triggered when slide-out is shown */
-            opacity: 1; /* Always visible in slideout for simplicity */
+            opacity: 1;
             transform: translateX(0);
         }
 
@@ -407,7 +401,6 @@
         .action-list-item:last-child i {
             color: #D32F2F;
         }
-        /* No staggered animation here, as the slide-out itself animates */
 
 
         /* --- Bottom Navigation --- */
@@ -466,14 +459,14 @@
             transform: translateY(100%);
         }
 
-        /* --- Overlay Menu (for "Mer" in bottom nav - separate from profile slide-out) --- */
+        /* --- Overlay Menu (för "Mer" i bottom nav - SVART MED VIT TEXT) --- */
         .overlay-menu {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--color-black);
+            background-color: var(--color-black); /* Svart bakgrund */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -481,32 +474,56 @@
             z-index: 2000;
             transform: translateY(100%);
             transition: transform 0.4s ease-in-out;
+            padding-bottom: 60px; /* Space for bottom content if needed */
         }
 
         .overlay-menu.show {
             transform: translateY(0);
         }
 
-        .overlay-menu a {
-            font-family: var(--font-body);
-            color: var(--color-white);
-            text-decoration: none;
-            font-size: 2em;
-            padding: 15px 0;
-            width: 80%;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: background-color var(--transition-duration), color var(--transition-duration);
-            font-weight: 600;
+        .overlay-menu .menu-content {
+            width: 100%;
+            max-width: 500px; /* Max bredd för innehåll */
+            padding: 0 20px;
+            box-sizing: border-box;
+            text-align: center; /* Centrera länkar som helhet */
         }
 
-        .overlay-menu a:last-child {
-            border-bottom: none;
+        .overlay-menu a {
+            font-family: var(--font-display); /* Serif-font för rubriker */
+            color: var(--color-white);
+            text-decoration: none;
+            font-size: 2.2em; /* Större rubriker */
+            font-weight: 400; /* Lättare vikt */
+            padding: 15px 0;
+            display: block;
+            width: 100%; /* Fyller bredden */
+            text-align: center;
+            transition: background-color var(--transition-duration), color var(--transition-duration);
         }
 
         .overlay-menu a:hover {
             background-color: rgba(255, 255, 255, 0.05);
             color: rgba(255, 255, 255, 0.8);
+        }
+
+        .overlay-menu .sub-links {
+            list-style: none;
+            padding: 20px 0 0;
+            margin: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+        }
+
+        .overlay-menu .sub-links li a {
+            font-family: var(--font-body); /* Body font för sub-länkar */
+            font-size: 1.1em; /* Mindre text */
+            font-weight: 400;
+            padding: 10px 0;
+            color: rgba(255, 255, 255, 0.7); /* Lättare färg */
+        }
+        .overlay-menu .sub-links li a:hover {
+             color: var(--color-white);
         }
 
         .overlay-menu .close-menu {
@@ -546,7 +563,7 @@
                 font-size: 2em;
             }
             .profile-content {
-                padding: 15px;
+                padding: 0 15px 15px;
             }
             .profile-content .profile-initials {
                 width: 50px;
@@ -575,7 +592,10 @@
                 font-size: 0.7em;
             }
             .overlay-menu a {
-                font-size: 1.6em;
+                font-size: 1.8em; /* Mindre på mobil */
+            }
+            .overlay-menu .sub-links li a {
+                font-size: 1em;
             }
             .overlay-menu .close-menu {
                 font-size: 2em;
@@ -626,13 +646,19 @@
 
     <div class="overlay-menu" id="overlay-menu">
         <span class="close-menu" id="close-menu">&times;</span>
-        <a href="#"><i class="fas fa-search"></i> Sök</a>
-        <a href="#"><i class="fas fa-home"></i> Mina hem</a>
-        <a href="#"><i class="fas fa-fire"></i> Matchningar</a>
-        <a href="#"><i class="fas fa-users"></i> Mäklare</a>
-        <a href="#"><i class="fas fa-briefcase"></i> Hitta mäklare</a>
-        <a href="#"><i class="fas fa-bookmark"></i> Sälj bostad</a>
-        <a href="#"><i class="fas fa-sign-out-alt"></i> Logga ut</a>
+        <div class="menu-content">
+            <a href="#">Sök bostad</a>
+            <a href="#">Hitta mäklare</a>
+            <a href="#">Här finns vi</a>
+            <a href="#">Så funkar det</a>
+            <a href="#">Sälj bostad</a>
+            <ul class="sub-links">
+                <li><a href="#">Nyproduktion</a></li>
+                <li><a href="#">Utland</a></li>
+                <li><a href="#">Karriär</a></li>
+                <li><a href="#">Skapa bostadsbevakning</a></li>
+            </ul>
+        </div>
     </div>
 
     <aside class="profile-slideout" id="profile-slideout">
@@ -707,7 +733,7 @@
                 </ul>
 
                 <div style="padding-top: 30px;">
-                    <h2 style="font-size: 1.4em; font-weight: 600; margin-bottom: 15px;">Nytt på EO Market</h2>
+                    <h2 style="font-family: var(--font-display); font-size: 1.4em; font-weight: 400; margin-bottom: 15px;">Nytt på EO Market</h2>
                     <p style="font-size: 0.95em; color: var(--color-gray-dark);">
                         Här kommer spännande nyheter och uppdateringar från EO Market att visas.
                     </p>
@@ -730,7 +756,7 @@
             lastScrollY = window.scrollY;
         });
 
-        // --- Toggle "Mer" Overlay Menu ---
+        // --- Toggle "Mer" Overlay Menu (Black menu) ---
         const moreButton = document.getElementById('more-button');
         const overlayMenu = document.getElementById('overlay-menu');
         const closeMenuButton = document.getElementById('close-menu');
@@ -752,7 +778,7 @@
             }
         });
 
-        // --- Profile Slide-out Menu Logic ---
+        // --- Profile Slide-out Menu Logic (White profile page) ---
         const openProfileSlideoutBtn = document.getElementById('open-profile-slideout');
         const profileSlideout = document.getElementById('profile-slideout');
         const closeProfileSlideoutBtn = document.getElementById('close-profile-slideout');
@@ -760,9 +786,9 @@
         function toggleProfileSlideout() {
             profileSlideout.classList.toggle('show');
             if (profileSlideout.classList.contains('show')) {
-                document.body.style.overflow = 'hidden'; // Prevent background scroll
+                document.body.style.overflow = 'hidden';
             } else {
-                document.body.style.overflow = ''; // Restore scroll
+                document.body.style.overflow = '';
             }
         }
 
@@ -771,7 +797,6 @@
 
         // Close slideout if clicking outside (optional, but good UX)
         document.addEventListener('click', (event) => {
-            // Check if the click is outside the slideout AND not on the open button
             if (profileSlideout.classList.contains('show') &&
                 !profileSlideout.contains(event.target) &&
                 !openProfileSlideoutBtn.contains(event.target)) {
@@ -785,14 +810,11 @@
 
         profileSegmentedButtons.forEach(button => {
             button.addEventListener('click', () => {
-                // Deactivate current active button and section within the profile slideout
                 document.querySelector('#profile-slideout .segmented-button.active').classList.remove('active');
                 document.querySelector('#profile-slideout .content-section.active').classList.remove('active');
 
-                // Activate clicked button
                 button.classList.add('active');
 
-                // Activate corresponding content section
                 const targetId = button.dataset.target;
                 document.getElementById(targetId).classList.add('active');
             });
