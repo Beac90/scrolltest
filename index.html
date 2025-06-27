@@ -47,6 +47,10 @@
             color: var(--color-black);
         }
 
+        .profile-container {
+            position: relative; /* För att positionera profilmenyn */
+        }
+
         .profile-icon {
             width: 40px;
             height: 40px;
@@ -60,9 +64,47 @@
             overflow: hidden;
             border: 1px solid var(--color-black);
             box-sizing: border-box;
+            cursor: pointer; /* Indikerar att den är klickbar */
         }
         .profile-icon i {
             color: var(--color-white);
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: calc(100% + 10px); /* Position under ikonen + lite mellanrum */
+            right: 0;
+            background-color: var(--color-black);
+            color: var(--color-white);
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            min-width: 180px;
+            overflow: hidden; /* För att dölja rundade hörn på länkar */
+            transform: translateY(-10px); /* Startposition för animering */
+            opacity: 0;
+            visibility: hidden; /* Dölj helt tills den visas */
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s ease-out;
+            z-index: 1002; /* Över header och andra element */
+        }
+
+        .profile-menu.show {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .profile-menu a {
+            display: block;
+            padding: 12px 15px;
+            color: var(--color-white);
+            text-decoration: none;
+            font-family: var(--font-body);
+            font-size: 0.95em;
+            transition: background-color 0.2s ease;
+        }
+
+        .profile-menu a:hover {
+            background-color: #333; /* Lätt grå vid hover */
         }
 
         /* --- Hero Section --- */
@@ -73,7 +115,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Färg tas nu från h1 och p elementen */
             text-align: center;
         }
 
@@ -86,14 +127,13 @@
             background: url('https://images.unsplash.com/photo-1549298495-9271c6d3c9f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw0fHxuYXR1cmUlMkBzY2FuZGluYXZpYW58ZW58MHx8fHwxNzE5NjkxMzQ1fDB8fHw&ixlib=rb-4.0.3&q=80&w=1080') center/cover no-repeat fixed;
             z-index: -1;
             animation: slideInFromTop 1.5s ease-out forwards;
-            filter: brightness(0.95); /* Mindre mörkning så svart text syns bättre */
+            filter: brightness(0.95);
         }
 
         .hero-content {
             position: relative;
             z-index: 1;
             padding: 20px;
-            /* Ta bort text-shadow då texten nu är mörk */
             animation: fadeIn 2s ease-out forwards;
             opacity: 0;
         }
@@ -103,7 +143,7 @@
             font-size: 3em;
             margin: 0 0 10px;
             font-weight: 700;
-            color: var(--color-black); /* Ändrad till svart */
+            color: var(--color-black);
         }
 
         .hero-content p {
@@ -111,7 +151,7 @@
             font-size: 1.1em;
             max-width: 600px;
             margin: 0 auto;
-            color: var(--color-black); /* Ändrad till svart */
+            color: var(--color-black);
         }
 
         /* --- Empty Content Area (for scroll space) --- */
@@ -250,6 +290,13 @@
             .hero-content p {
                 font-size: 0.9em;
             }
+            .profile-menu {
+                min-width: 150px; /* Mindre på små skärmar */
+            }
+            .profile-menu a {
+                padding: 10px 12px;
+                font-size: 0.9em;
+            }
             .overlay-menu a {
                 font-size: 1.8em;
                 padding: 12px 0;
@@ -266,9 +313,16 @@
 
     <header>
         <div class="header-title">Välkommen</div>
-        <div class="profile-icon">
-            <i class="fas fa-user"></i>
+        <div class="profile-container"> <div class="profile-icon" id="profile-icon">
+                <i class="fas fa-user"></i>
+                </div>
+            <div class="profile-menu" id="profile-menu">
+                <a href="#"><i class="fas fa-cog"></i> Inställningar</a>
+                <a href="#"><i class="fas fa-heart"></i> Sparade bostäder</a>
+                <a href="#"><i class="fas fa-bell"></i> Bevakningar</a>
+                <a href="#"><i class="fas fa-sign-out-alt"></i> Logga ut</a>
             </div>
+        </div>
     </header>
 
     <section class="hero-section">
@@ -343,6 +397,22 @@
             if (event.target === overlayMenu) {
                 overlayMenu.classList.remove('show');
                 document.body.style.overflow = '';
+            }
+        });
+
+        // --- Hantera profilmenyn ---
+        const profileIcon = document.getElementById('profile-icon');
+        const profileMenu = document.getElementById('profile-menu');
+
+        profileIcon.addEventListener('click', (event) => {
+            profileMenu.classList.toggle('show'); // Växlar 'show' klassen
+            event.stopPropagation(); // Förhindra att klicket propagerar till document
+        });
+
+        // Stäng profilmenyn om man klickar någon annanstans på sidan
+        document.addEventListener('click', (event) => {
+            if (!profileIcon.contains(event.target) && !profileMenu.contains(event.target)) {
+                profileMenu.classList.remove('show');
             }
         });
     </script>
