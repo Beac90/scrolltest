@@ -1,51 +1,130 @@
-
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
-  <title>Scroll Test</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100dvh;
-      height: 100%;
-      overflow-x: hidden;
-      font-family: sans-serif;
-    }
-    .bottom-nav {
-      position: sticky;
-      bottom: 0;
-      width: 100%;
-      background: #fff;
-      padding: 1rem;
-      display: flex;
-      justify-content: space-around;
-      box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-    }
-    button {
-      font-size: 1rem;
-      padding: 0.5rem 1rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dölj Bottenfält vid Skroll</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            padding-bottom: 60px; /* Ge utrymme för bottenmenyn så den inte täcker innehåll */
+            min-height: 150vh; /* Se till att det finns tillräckligt med innehåll att skrolla */
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .content {
+            padding: 20px;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        #bottom-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease-in-out; /* Mjuk övergång för transform */
+            z-index: 1000; /* Se till att den ligger över annat innehåll */
+        }
+
+        #bottom-bar a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 15px;
+            transition: background-color 0.2s ease;
+        }
+
+        #bottom-bar a:hover {
+            background-color: #555;
+            border-radius: 4px;
+        }
+
+        .hidden-bar {
+            transform: translateY(100%); /* Döljer fältet genom att flytta det nedåt */
+        }
+
+        /* Enkel responsivitet */
+        @media (max-width: 600px) {
+            .content {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div style="height: 300vh; padding: 1rem;">
-    <h1>Scrolla ner</h1>
-    <p>Bottom-nav kommer att synas bättre när browser UI försvinner.</p>
-  </div>
-  <div class="bottom-nav">
-    <button>Home</button>
-    <button>Sök</button>
-    <button>Logga in</button>
-  </div>
-  <script>
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        window.scrollTo(0, 1);
-      }, 50);
-    });
-  </script>
+
+    <header>
+        <h1>Välkommen till Sidan</h1>
+        <p>Skrolla ner för att se bottenfältet försvinna!</p>
+    </header>
+
+    <div class="content">
+        <h2>Om Denna Demo</h2>
+        <p>Detta är en enkel demonstration av hur du kan implementera funktionalitet för att dölja webbläsarens bottenfält (eller en egen anpassad meny) när användaren skrollar nedåt på en mobil enhet, och sedan visa den igen när användaren skrollar uppåt.</p>
+
+        <h3>Hur det fungerar:</h3>
+        <ul>
+            <li>**JavaScript:** En funktion lyssnar på `scroll`-händelsen. Den jämför den aktuella skrollpositionen med den föregående.</li>
+            <li>**Skrolla Nedåt:** Om användaren skrollar nedåt, läggs CSS-klassen `.hidden-bar` till bottenfältets element.</li>
+            <li>**Skrolla Uppåt:** Om användaren skrollar uppåt, tas CSS-klassen `.hidden-bar` bort.</li>
+            <li>**CSS:** `.hidden-bar`-klassen använder `transform: translateY(100%);` för att flytta elementet helt utanför skärmen nedåt. En `transition` används för att göra animeringen mjuk och inte hackig.</li>
+        </ul>
+
+        <p>För att testa detta, öppna denna sida på en mobil enhet eller använd utvecklarverktygen i din webbläsare (oftast F12) för att simulera en mobil vy och skrolla sedan upp och ner.</p>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <p>Curabitur pretium tincidunt lacus, eget vulputate odio hendrerit in. Fusce at sapien et est pharetra bibendum. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+        <p>Aenean nonummy hendrerit mauris. Phasellus porta. Fusce suscipit varius mi. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla dui. Fusce feugiat malesuada odio. Morbi nunc odio, gravida at, cursus nec, luctus a, lorem. Maecenas tristique orci ac sem. Duis ultricies pharetra magna. Donec accumsan malesuada orci. Donec sit amet eros.</p>
+        <p>Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue eget diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor at sed. Sed non quam. In vel mi sit amet arcu mollis auctor. Suspendisse pulvinar, est sed dictum volutpat, dolor diam sodales erat, non scelerisque sem purus eget est.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <p>Curabitur pretium tincidunt lacus, eget vulputate odio hendrerit in. Fusce at sapien et est pharetra bibendum. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+    </div>
+
+    <div id="bottom-bar">
+        <a href="#">Hem</a>
+        <a href="#">Sök</a>
+        <a href="#">Favoriter</a>
+        <a href="#">Inställningar</a>
+    </div>
+
+    <script>
+        let lastScrollY = window.scrollY;
+        const bottomBar = document.getElementById('bottom-bar');
+
+        window.addEventListener('scroll', () => {
+            if (lastScrollY < window.scrollY) {
+                // Skrolla nedåt - dölj fältet
+                bottomBar.classList.add('hidden-bar');
+            } else {
+                // Skrolla uppåt - visa fältet
+                bottomBar.classList.remove('hidden-bar');
+            }
+            lastScrollY = window.scrollY;
+        });
+    </script>
+
 </body>
 </html>
