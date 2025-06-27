@@ -41,9 +41,9 @@
         }
 
         .header-title {
-            font-family: var(--font-body); /* Använd Inter även här */
+            font-family: var(--font-body);
             font-size: 1.8em;
-            font-weight: 500; /* Lite fetare för att sticka ut */
+            font-weight: 500;
             color: var(--color-black);
         }
 
@@ -67,13 +67,13 @@
 
         /* --- Hero Section --- */
         .hero-section {
-            height: 50vh; /* Responsive height */
+            height: 50vh;
             position: relative;
-            overflow: hidden; /* Important for parallax */
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: var(--color-white);
+            /* Färg tas nu från h1 och p elementen */
             text-align: center;
         }
 
@@ -83,26 +83,27 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://images.unsplash.com/photo-1549298495-9271c6d3c9f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw0fHxuYXR1cmUlMkBzY2FuZGluYXZpYW58ZW58MHx8fHwxNzE5NjkxMzQ1fDB8fHw&ixlib=rb-4.0.3&q=80&w=1080') center/cover no-repeat fixed; /* Parallax effect */
-            z-index: -1; /* Behind content */
-            animation: slideInFromTop 1.5s ease-out forwards; /* Entrance animation */
-            filter: brightness(0.7); /* Darken image slightly for text readability */
+            background: url('https://images.unsplash.com/photo-1549298495-9271c6d3c9f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw0fHxuYXR1cmUlMkBzY2FuZGluYXZpYW58ZW58MHx8fHwxNzE5NjkxMzQ1fDB8fHw&ixlib=rb-4.0.3&q=80&w=1080') center/cover no-repeat fixed;
+            z-index: -1;
+            animation: slideInFromTop 1.5s ease-out forwards;
+            filter: brightness(0.95); /* Mindre mörkning så svart text syns bättre */
         }
 
         .hero-content {
             position: relative;
             z-index: 1;
             padding: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            /* Ta bort text-shadow då texten nu är mörk */
             animation: fadeIn 2s ease-out forwards;
-            opacity: 0; /* Start hidden for animation */
+            opacity: 0;
         }
 
         .hero-content h1 {
-            font-family: var(--font-body); /* Använd Inter även här */
+            font-family: var(--font-body);
             font-size: 3em;
             margin: 0 0 10px;
-            font-weight: 700; /* Tydligare rubrik */
+            font-weight: 700;
+            color: var(--color-black); /* Ändrad till svart */
         }
 
         .hero-content p {
@@ -110,11 +111,12 @@
             font-size: 1.1em;
             max-width: 600px;
             margin: 0 auto;
+            color: var(--color-black); /* Ändrad till svart */
         }
 
         /* --- Empty Content Area (for scroll space) --- */
         .content-spacer {
-            height: 80vh; /* Skapa skrollutrymme utan faktiskt innehåll */
+            height: 80vh;
             background-color: var(--color-white);
         }
 
@@ -125,7 +127,7 @@
             left: 0;
             width: 100%;
             background-color: var(--color-white);
-            border-top: 1px solid #eee; /* Subtle separator */
+            border-top: 1px solid #eee;
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
@@ -145,7 +147,7 @@
         }
 
         .nav-item:hover {
-            color: #555; /* Lätt grå vid hover */
+            color: #555;
         }
 
         .nav-item i {
@@ -185,7 +187,7 @@
         }
 
         .overlay-menu a {
-            font-family: var(--font-body); /* Använd Inter även här */
+            font-family: var(--font-body);
             color: var(--color-white);
             text-decoration: none;
             font-size: 2.2em;
@@ -194,7 +196,7 @@
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             transition: background-color 0.2s ease, color 0.2s ease;
-            font-weight: 700; /* Mer framträdande */
+            font-weight: 700;
         }
 
         .overlay-menu a:last-child {
