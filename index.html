@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skandinavisk Minimalistisk Sida</title>
+    <title>Välkommen</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
@@ -11,27 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Platshållare för IvyOra Display - MÅSTE ersättas med din egen licensierade font */
-        /* @font-face {
-            font-family: 'IvyOra Display';
-            src: url('path/to/IvyOraDisplay-Regular.woff2') format('woff2'),
-                 url('path/to/IvyOraDisplay-Regular.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'IvyOra Display';
-            src: url('path/to/IvyOraDisplay-Bold.woff2') format('woff2'),
-                 url('path/to/IvyOraDisplay-Bold.woff') format('woff');
-            font-weight: bold;
-            font-style: normal;
-        } */
-
-
         :root {
             --color-black: #000000;
             --color-white: #FFFFFF;
-            --font-display: 'IvyOra Display', serif; /* Fallback till standard serif */
             --font-body: 'Inter', sans-serif;
         }
 
@@ -59,9 +41,9 @@
         }
 
         .header-title {
-            font-family: var(--font-display);
+            font-family: var(--font-body); /* Använd Inter även här */
             font-size: 1.8em;
-            font-weight: normal; /* IvyOra Display är ofta elegant utan bold */
+            font-weight: 500; /* Lite fetare för att sticka ut */
             color: var(--color-black);
         }
 
@@ -79,7 +61,7 @@
             border: 1px solid var(--color-black);
             box-sizing: border-box;
         }
-        .profile-icon i { /* For Font Awesome icon */
+        .profile-icon i {
             color: var(--color-white);
         }
 
@@ -117,10 +99,10 @@
         }
 
         .hero-content h1 {
-            font-family: var(--font-display);
+            font-family: var(--font-body); /* Använd Inter även här */
             font-size: 3em;
             margin: 0 0 10px;
-            font-weight: normal;
+            font-weight: 700; /* Tydligare rubrik */
         }
 
         .hero-content p {
@@ -130,31 +112,10 @@
             margin: 0 auto;
         }
 
-        /* --- Content --- */
-        .content {
-            padding: 40px 20px;
-            max-width: 800px;
-            margin: 40px auto;
+        /* --- Empty Content Area (for scroll space) --- */
+        .content-spacer {
+            height: 80vh; /* Skapa skrollutrymme utan faktiskt innehåll */
             background-color: var(--color-white);
-            border-radius: 0; /* No rounded corners for editorial look */
-            box-shadow: none; /* No shadow for clean look */
-            text-align: left;
-            line-height: 1.6;
-        }
-
-        .content h2 {
-            font-family: var(--font-display);
-            font-size: 2em;
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: var(--color-black);
-            text-align: center;
-        }
-
-        .content p {
-            font-family: var(--font-body);
-            font-size: 1em;
-            margin-bottom: 1.5em;
         }
 
         /* --- Bottom Navigation --- */
@@ -224,15 +185,16 @@
         }
 
         .overlay-menu a {
-            font-family: var(--font-display); /* Fint typsnitt för menyval */
+            font-family: var(--font-body); /* Använd Inter även här */
             color: var(--color-white);
             text-decoration: none;
-            font-size: 2.2em; /* Större för fokus */
+            font-size: 2.2em;
             padding: 15px 0;
             width: 80%;
             text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Lätt linje */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             transition: background-color 0.2s ease, color 0.2s ease;
+            font-weight: 700; /* Mer framträdande */
         }
 
         .overlay-menu a:last-child {
@@ -240,7 +202,7 @@
         }
 
         .overlay-menu a:hover {
-            background-color: rgba(255, 255, 255, 0.05); /* Mycket subtil hover */
+            background-color: rgba(255, 255, 255, 0.05);
             color: rgba(255, 255, 255, 0.8);
         }
 
@@ -249,9 +211,9 @@
             top: 20px;
             right: 20px;
             color: var(--color-white);
-            font-size: 2.8em; /* Större för enkel klick */
+            font-size: 2.8em;
             cursor: pointer;
-            line-height: 1; /* Adjust vertical alignment */
+            line-height: 1;
         }
 
         /* --- Animations --- */
@@ -286,12 +248,6 @@
             .hero-content p {
                 font-size: 0.9em;
             }
-            .content {
-                padding: 30px 15px;
-            }
-            .content h2 {
-                font-size: 1.8em;
-            }
             .overlay-menu a {
                 font-size: 1.8em;
                 padding: 12px 0;
@@ -307,7 +263,7 @@
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
     <header>
-        <div class="header-title">Minimalist</div>
+        <div class="header-title">Välkommen</div>
         <div class="profile-icon">
             <i class="fas fa-user"></i>
             </div>
@@ -316,16 +272,12 @@
     <section class="hero-section">
         <div class="hero-image"></div>
         <div class="hero-content">
-            <h1>Enkelhetens Elegans</h1>
-            <p>Upptäck skönheten i det avskalade och funktionella.</p>
+            <h1>Minimalistisk Design</h1>
+            <p>Ett rent uttryck för funktion och estetik.</p>
         </div>
     </section>
 
-    <div class="content">
-        <h2>Välkommen</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Curabitur pretium tincidunt lacus, eget vulputate odio hendrerit in. Fusce at sapien et est pharetra bibendum. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla.</p>
-    </div>
+    <div class="content-spacer"></div>
 
     <div id="bottom-nav">
         <a href="#" class="nav-item">
