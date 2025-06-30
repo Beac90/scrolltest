@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EO Market</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-black: #000000;
+            --color-white: #FFFFFF;
+            --color-gray-dark: #333333;
+            --color-gray-medium: #888888;
+            --color-gray-light: #EEEEEE;
+            --color-orange: #C67F33; /* Färg från initialikon, burned orange */
+            --font-body: 'Inter', sans-serif;
+            --font-display: 'Playfair Display', serif; /* Ny font för rubriker/display */
+            --border-radius-small: 8px;
+            --transition-duration: 0.3s;
+            --content-margin-mobile: 16px; /* Mobil specifik marginal */
+            --content-margin-desktop: 40px; /* Desktop specifik marginal */
+            --desktop-header-height: 80px; /* Höjd för desktop-headern */
+            --mobile-header-height: 60px; /* Ny höjd för mobil headern */
+            --bottom-nav-height: 70px; /* Höjd för bottennavigering */
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%; /* Ensure html and body take full height */
+            overflow-x: hidden; /* Prevent horizontal scroll for the entire page */
+            scroll-behavior: smooth; /* Smooth scroll for anchor links */
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-white);
+            color: var(--color-black);
+            min-height: 120vh; /* Ensure scrollability */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            /* Padding sätts av JS baserat på desktop/mobil header */
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        /* --- Global Container for all pages to prevent horizontal overflow --- */
+        #app-container {
+            position: relative;
+            /* overflow: hidden; /* VARNING: Denna KAN orsaka problem med sticky om den finns på en förälder till sticky-elementet */
+            /* Ta bort den här om sticky inte fungerar, eller hantera med JS */
+        }
+
+        /* --- Desktop Header (Erik Olsson logo etc.) --- */
+        .desktop-header {
+            display: none; /* Dölj som standard, visas på desktop via JS */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--desktop-header-height);
+            background-color: var(--color-white);
+            border-bottom: 1px solid var(--color-gray-light);
+            z-index: 999;
+            box-sizing: border-box;
+            padding: 0 var(--content-margin-desktop);
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .desktop-header .logo {
+            font-family: var(--font-display);
+            font-size: 1.8em;
+            font-weight: 400;
+            color: var(--color-black);
+            text-decoration: none;
+            font-style: italic;
+        }
+
+        .desktop-header nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 30px;
+        }
+
+        .desktop-header nav a {
+            text-decoration: none;
+            color: var(--color-gray-dark);
+            font-weight: 500;
+            font-size: 0.95em;
+            transition: color var(--transition-duration);
+        }
+
+        .desktop-header nav a:hover {
+            color: var(--color-black);
+        }
+
+        .desktop-header .cta-button {
+            background-color: var(--color-gray-light);
+            color: var(--color-black);
+            padding: 10px 20px;
+            border-radius: var(--border-radius-small);
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color var(--transition-duration);
+        }
+
+        .desktop-header .cta-button:hover {
+            background-color: var(--color-gray-medium);
+            color: var(--color-white);
+        }
+
+        .desktop-header .profile-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--color-gray-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            color: var(--color-gray-dark);
+            cursor: pointer;
+            margin-left: 20px;
+        }
+
+        /* --- New Mobile Header (General for all pages) --- */
+        .mobile-header {
+            display: none; /* Hidden by default, shown by JS on mobile */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--mobile-header-height);
+            background-color: var(--color-white);
+            border-bottom: 1px solid var(--color-gray-light);
+            z-index: 1001;
+            box-sizing: border-box;
+            padding: 0 var(--content-margin-mobile);
+            display: flex; /* Flexbox for layout */
+            justify-content: space-between; /* Space logo and icons */
+            align-items: center;
+        }
+
+        .mobile-header .logo {
+            font-family: var(--font-display);
+            font-size: 1.5em; /* Mindre på mobil */
+            font-weight: 400;
+            color: var(--color-black);
+            text-decoration: none;
+            font-style: italic;
+        }
+
+        .mobile-header .header-icons {
+            display: flex;
+            gap: 15px; /* Mellanrum mellan ikonerna */
+        }
+
+        .mobile-header .header-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--color-gray-light); /* Lätt grå bakgrund för ikoner */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1em;
+            color: var(--color-gray-dark);
+            cursor: pointer;
+            transition: background-color var(--transition-duration);
+        }
+        .mobile-header .header-icon:hover {
+            background-color: var(--color-gray-medium);
+            color: var(--color-white);
+        }
+        /* Specific override for the home page mobile header profile icon */
+        #home-page-mobile-profile {
+            background-color: rgba(0,0,0,0.5); /* Semi-transparent black on home hero */
+            color: var(--color-white);
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        #home-page-mobile-profile:hover {
+            background-color: var(--color-black);
+        }
+
+
+        /* --- Page Containers --- */
+        .page-container {
+            display: none; /* Hidden by default, shown by JS */
+            padding-top: 0; /* Base, adjusted by JS */
+            width: 100%; /* Ensure they take full width */
+            box-sizing: border-box;
+            /* Inte overflow:hidden här heller om det är en förälder till sticky */
+        }
+
+        #home-page {
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden; /* Denna sida kan ha overflow:hidden då den inte innehåller sticky */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--color-black);
+            box-sizing: border-box;
+            /* Padding sätts via JS på body */
+        }
+
+        #search-page-main {
+             padding: 0; /* No padding here, handled by internal sticky header */
+             /* Viktigt: Inte overflow:hidden här för att sticky ska fungera */
+        }
+
+
+        .hero-main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hero-content-text {
+            animation: fadeIn 2s ease-out forwards;
+            opacity: 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Animated text common styles */
+        .animated-text-line {
+            opacity: 0;
+            transform: translateY(20px); /* Start 20px below final position */
+            animation-fill-mode: backwards; /* Keep element hidden before animation */
+        }
+
+        /* Animation Keyframes for text slide-up */
+        @keyframes slide-up-fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        .hero-content h1 {
+            font-family: var(--font-body);
+            font-size: 3.5em;
+            margin: 0 0 10px;
+            font-weight: 700;
+            color: var(--color-black);
+        }
+
+        .hero-content p {
+            font-family: var(--font-body);
+            font-size: 1.2em;
+            max-width: 600px;
+            margin: 0 auto;
+            color: var(--color-black);
+        }
+
+        .hero-content-image {
+            width: 100%;
+            max-width: 500px;
+            border-radius: var(--border-radius-small);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            animation: fadeIn 2s ease-out forwards 0.5s;
+        }
+
+        /* --- "Sök Bostad" Page Content --- */
+        .search-page-content {
+            padding: var(--content-margin-mobile); /* Standard padding for the rest of the content */
+            padding-top: 0; /* Managed by sticky header or the top of the body/main */
+            position: relative; /* To contain sticky header */
+            /* VIKTIGT: Denna FÅR INTE ha overflow: hidden */
+        }
+
+        /* Rubriken "Sök bostad" */
+        .search-page-title {
+            font-family: var(--font-display);
+            font-size: 2.5em;
+            font-weight: 400;
+            margin-top: 20px; /* Kan justeras för att ge lite luft överst */
+            margin-bottom: 10px; /* Mindre marginal till intro-texten */
+        }
+
+        /* Intro text under rubriken */
+        .search-intro-text {
+            font-size: 1em;
+            color: var(--color-gray-dark);
+            margin-bottom: 20px; /* Marginal under texten innan sticky-elementen börjar */
+            line-height: 1.5;
+        }
+
+
+        .search-sticky-header {
+            position: sticky;
+            top: 0; /* Fäst till toppen av viewporten (eller närmsta scrollbara förälder utan overflow) */
+            z-index: 990;
+            background-color: var(--color-white);
+            padding-bottom: 10px; /* Space under sticky elements */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: box-shadow var(--transition-duration);
+            padding-left: var(--content-margin-mobile); /* Mobile padding */
+            padding-right: var(--content-margin-mobile); /* Mobile padding */
+            box-sizing: border-box;
+            width: 100%;
+            /* VIKTIGT: Ge den en bakgrundsfärg för att dölja innehållet under när den är sticky */
+        }
+
+        .search-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--color-gray-light);
+            margin-bottom: 20px;
+        }
+
+        .search-tab-button {
+            flex: 1;
+            padding: 12px 0;
+            text-align: center;
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--color-gray-medium);
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: color var(--transition-duration);
+        }
+
+        .search-tab-button.active {
+            color: var(--color-black);
+            font-weight: 600;
+        }
+
+        .search-tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--color-black);
+        }
+
+        .search-input-container {
+            display: flex;
+            align-items: center;
+            background-color: var(--color-gray-light);
+            border-radius: var(--border-radius-small);
+            padding: 10px 15px;
+            margin-bottom: 15px;
+        }
+
+        .search-input-container input {
+            flex-grow: 1;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 1em;
+            padding: 5px 0;
+        }
+
+        .search-input-container i {
+            color: var(--color-gray-medium);
+            margin-left: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+
+        /* --- Filter Tags Container (Not sticky, horizontal scroll) --- */
+        .filter-tags-container {
+            display: flex; /* Use flexbox for horizontal layout */
+            overflow-x: auto; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+            -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
+            margin-bottom: 20px; /* Space below the tags */
+            padding-bottom: 10px; /* Extra padding to prevent clipping of shadow/content below */
+            gap: 10px; /* Space between tags */
+            /* Add horizontal padding so tags don't touch the edge */
+            padding-left: var(--content-margin-mobile);
+            padding-right: var(--content-margin-mobile);
+            /* Reset any padding from search-page-content to handle its own padding */
+            margin-left: calc(-1 * var(--content-margin-mobile));
+            margin-right: calc(-1 * var(--content-margin-mobile));
+        }
+        /* Hide scrollbar for Webkit browsers (Chrome, Safari) */
+        .filter-tags-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-tag {
+            flex-shrink: 0; /* Prevent tags from shrinking */
+            background-color: var(--color-gray-light);
+            color: var(--color-black);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color var(--transition-duration);
+            white-space: nowrap; /* Ensure tag text stays on one line */
+        }
+
+        .filter-tag.active {
+            background-color: var(--color-gray-dark);
+            color: var(--color-white);
+        }
+
+        .filter-tag:hover {
+            background-color: var(--color-gray-medium);
+            color: var(--color-white);
+        }
+
+        .filter-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-option-button {
+            background-color: var(--color-gray-light);
+            color: var(--color-black);
+            padding: 8px 12px;
+            border-radius: var(--border-radius-small);
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color var(--transition-duration);
+        }
+
+        .filter-option-button i {
+            margin-right: 8px;
+        }
+
+        .filter-option-button:hover {
+            background-color: var(--color-gray-medium);
+        }
+
+        .listing-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            /* Lägg till padding-bottom här för att ge utrymme ovanför bottom nav på mobil */
+            padding-bottom: 20px; /* Initialt värde, justeras av JS vid behov */
+        }
+
+        .listing-card {
+            background-color: var(--color-white);
+            border-radius: var(--border-radius-small);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .listing-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .listing-card .tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: rgba(0,0,0,0.6);
+            color: var(--color-white);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .listing-card .heart-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: var(--color-white);
+            font-size: 1.5em;
+            cursor: pointer;
+            text-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+
+        .listing-card-content {
+            padding: 15px;
+        }
+
+        .listing-card-content h3 {
+            font-family: var(--font-display);
+            font-style: italic;
+            font-size: 1.4em;
+            margin: 0 0 5px;
+            line-height: 1.2;
+        }
+
+        .listing-card-content p {
+            font-size: 0.9em;
+            color: var(--color-gray-medium);
+            margin: 0 0 10px;
+        }
+
+        .listing-card-content .details {
+            font-size: 0.9em;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- Full-height Slide-out Profile Menu (white, from right) --- */
+        .profile-slideout {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%; /* Full width on mobile to prevent overflow */
+            max-width: 375px; /* Max bredd för profilsidan på större skärmar */
+            height: 100%;
+            background-color: var(--color-white);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            z-index: 2000;
+            transform: translateX(100%);
+            transition: transform var(--transition-duration) ease-out;
+            overflow-y: auto; /* Viktigt för scrollbar profilpanel */
+            -webkit-overflow-scrolling: touch; /* För mjukare scroll på iOS */
+        }
+
+        .profile-slideout.show {
+            transform: translateX(0);
+        }
+
+        .profile-slideout .close-btn {
+            position: sticky; /* Detta blir också sticky i profilen */
+            top: 0;
+            left: 0;
+            background-color: var(--color-white);
+            width: 100%;
+            padding: 20px var(--content-margin-mobile); /* Använd mobil marginal */
+            text-align: left;
+            color: var(--color-black);
+            font-size: 2.5em;
+            cursor: pointer;
+            z-index: 2001;
+            border-bottom: 1px solid var(--color-gray-light);
+            box-sizing: border-box;
+        }
+        .profile-slideout .close-btn i {
+            font-size: 0.8em;
+        }
+
+        .profile-content {
+            padding: 0 var(--content-margin-mobile) var(--content-margin-mobile); /* Använd mobil marginal */
+        }
+
+        .profile-content .profile-top-header {
+            display: flex;
+            align-items: center;
+            padding-top: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--color-gray-light);
+            margin-bottom: 20px;
+        }
+
+        .profile-content .profile-initials {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--color-orange);
+            color: var(--color-white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .profile-content .profile-info h1 {
+            font-family: var(--font-display);
+            font-size: 1.6em;
+            font-weight: 400;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .profile-content .profile-info a {
+            font-size: 0.9em;
+            color: var(--color-gray-medium);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 2px;
+            transition: color var(--transition-duration);
+        }
+
+        .profile-content .profile-info a:hover {
+            color: var(--color-black);
+        }
+
+        .profile-content .profile-info a i {
+            margin-left: 5px;
+            font-size: 0.8em;
+        }
+
+        .profile-content .segmented-control {
+            display: flex;
+            border-bottom: 1px solid var(--color-gray-light);
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .profile-content .segmented-button {
+            flex: 1;
+            padding: 12px 0;
+            text-align: center;
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--color-gray-medium);
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: color var(--transition-duration);
+        }
+
+        .profile-content .segmented-button.active {
+            color: var(--color-black);
+            font-weight: 600;
+        }
+
+        .profile-content .segmented-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--color-black);
+            animation: slideInBottomLine 0.3s ease-out forwards;
+        }
+
+        .profile-content .content-section {
+            padding: 0;
+            margin-bottom: 30px;
+            display: none;
+            animation: fadeInContent 0.4s ease-out forwards;
+        }
+
+        .profile-content .content-section.active {
+            display: block;
+        }
+
+        /* Min bostad Card (Säljläge) */
+        .my-listing-card {
+            background-image: url('https://images.unsplash.com/photo-1549298495-9271c6d3c9f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw0fHxuYXR1cmUlMkBzY2FuZGluYXZpYW4uY29tXzE3MTk2OTEzNDVfMF98fHw&ixlib=rb-4.0.3&q=80&w=1080');
+            background-size: cover;
+            background-position: center;
+            border-radius: var(--border-radius-small);
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            color: var(--color-white);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .my-listing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 50%);
+            z-index: 0;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+            padding: 15px var(--content-margin-mobile); /* Använd mobil marginal */
+        }
+
+        .card-content .label {
+            font-size: 0.8em;
+            font-weight: 500;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .card-content h3 {
+            font-family: var(--font-display);
+            font-style: italic;
+            font-size: 1.8em;
+            margin: 0 0 10px;
+            line-height: 1.1;
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 10px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .card-stat-tag {
+            background-color: var(--color-orange);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+         .card-action-arrow {
+            position: absolute;
+            right: var(--content-margin-mobile); /* Använd mobil marginal */
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-white);
+            font-size: 1.5em;
+            z-index: 2;
+        }
+
+        /* Matchningar (Köpläge) */
+        .matches-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .matches-header h2 {
+            font-family: var(--font-display);
+            font-size: 1.4em;
+            font-weight: 400;
+            margin: 0;
+        }
+        .matches-header a {
+            color: var(--color-gray-medium);
+            text-decoration: none;
+            font-size: 0.9em;
+            display: inline-flex;
+            align-items: center;
+            transition: color var(--transition-duration);
+        }
+        .matches-header a:hover {
+            color: var(--color-black);
+        }
+        .matches-header a i {
+            margin-left: 5px;
+            font-size: 0.8em;
+        }
+
+        /* --- Action List (within profile slide-out) --- */
+        .action-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .action-list-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--color-gray-light);
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--color-black);
+            cursor: pointer;
+            transition: background-color var(--transition-duration);
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .action-list-item i {
+            font-size: 1.3em;
+            margin-right: 15px;
+            color: var(--color-gray-medium);
+            width: 25px;
+            text-align: center;
+        }
+
+        .action-list-item:hover {
+            background-color: var(--color-gray-light);
+        }
+
+        .action-list-item:last-child {
+            border-bottom: none;
+            color: #D32F2F;
+        }
+        .action-list-item:last-child i {
+            color: #D32F2F;
+        }
+
+
+        /* --- Bottom Navigation --- */
+        #bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--color-white);
+            border-top: 1px solid var(--color-gray-light);
+            display: flex; /* Default to flex, hidden by JS on desktop */
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+            transform: translateY(0);
+            transition: transform var(--transition-duration) ease-in-out;
+            height: var(--bottom-nav-height);
+            box-sizing: border-box;
+        }
+
+        .nav-item {
+            text-align: center;
+            cursor: pointer;
+            padding: 5px 0;
+            color: var(--color-gray-medium);
+            text-decoration: none;
+            transition: color var(--transition-duration), transform var(--transition-duration);
+            font-family: var(--font-body);
+            font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            color: var(--color-black);
+        }
+        .nav-item.active i {
+            color: var(--color-black);
+            transform: scale(1.1);
+        }
+
+        .nav-item:hover {
+            color: var(--color-black);
+        }
+        .nav-item:hover i {
+             color: var(--color-black);
+        }
+
+        .nav-item i {
+            font-size: 1.4em;
+            display: block;
+            margin-bottom: 4px;
+            transition: color var(--transition-duration), transform var(--transition-duration);
+        }
+
+        .nav-item span {
+            font-size: 0.75em;
+            white-space: nowrap;
+        }
+
+        .hidden-nav {
+            transform: translateY(100%);
+        }
+
+        /* --- Overlay Menu (för "Mer" i bottom nav - SVART MED VIT TEXT, VÄNSTERSTÄLLDA LÄNKAR) --- */
+        .overlay-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--color-black);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start; /* Vänsterjustera för mobil */
+            z-index: 2000;
+            transform: translateY(100%);
+            transition: transform 0.4s ease-in-out;
+            padding: 0 var(--content-margin-mobile); /* Mobil marginal */
+            box-sizing: border-box;
+            overflow-y: auto; /* Allow scrolling if menu content is too long */
+        }
+
+        .overlay-menu.show {
+            transform: translateY(0);
+        }
+
+        .overlay-menu .menu-content {
+            width: 100%;
+            max-width: 500px;
+            margin: 0;
+            text-align: left; /* Vänsterjustera allt innehåll */
+        }
+
+        .overlay-menu a {
+            font-family: var(--font-display);
+            color: var(--color-white);
+            text-decoration: none;
+            font-size: 2.2em;
+            font-weight: 400;
+            padding: 10px 0;
+            display: block;
+            width: 100%;
+            text-align: left; /* Vänsterjusterad text */
+            transition: color var(--transition-duration);
+        }
+
+        .overlay-menu a:hover {
+            color: var(--color-orange);
+        }
+
+        .overlay-menu .sub-links {
+            list-style: none;
+            padding: 20px 0 0;
+            margin: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+        }
+
+        .overlay-menu .sub-links li a {
+            font-family: var(--font-body);
+            font-size: 1.1em;
+            font-weight: 400;
+            padding: 8px 0;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .overlay-menu .sub-links li a:hover {
+             color: var(--color-orange);
+        }
+
+        .overlay-menu .close-menu {
+            position: absolute;
+            top: var(--content-margin-mobile); /* Mobil marginal */
+            right: var(--content-margin-mobile); /* Mobil marginal */
+            color: var(--color-white);
+            font-size: 2.5em;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInBottomLine {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+        /* New: for animated text lines */
+        @keyframes slide-up-fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px); /* Start 20px below final position */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0); /* End at final position */
+            }
+        }
+
+        .animated-text-line {
+            opacity: 0;
+            transform: translateY(20px); /* Initial hidden state */
+            /* Animation applied by JS with delay, so no animation here directly */
+        }
+
+        .animated-text-line.animate {
+            animation: slide-up-fade-in 0.6s ease-out forwards;
+        }
+
+
+        /* --- Responsive adjustments --- */
+        @media (max-width: 768px) { /* Mobilspecifika inställningar */
+            body {
+                padding-top: var(--mobile-header-height); /* Utrymme för nya mobil headern */
+                padding-bottom: var(--bottom-nav-height); /* Utrymme för bottom nav */
+            }
+
+            .mobile-header {
+                display: flex; /* Visa den nya mobil headern */
+            }
+            /* Dölj den gamla home-header-mobile, dess funktionalitet tas över */
+            .home-header-mobile {
+                display: none;
+            }
+
+            .search-page-content {
+                /* Padding för hela innehållet, inklusive rubriken */
+                padding: var(--content-margin-mobile);
+            }
+
+            .search-page-title {
+                margin-top: 20px; /* Luft över rubriken */
+                font-size: 2em;
+            }
+
+            .search-intro-text {
+                font-size: 0.9em;
+            }
+
+            .search-sticky-header {
+                top: var(--mobile-header-height); /* Fäster direkt under mobil headern */
+                padding-left: var(--content-margin-mobile);
+                padding-right: var(--content-margin-mobile);
+            }
+            /* Filter tags har redan sin egen padding-left/right, så ingen här */
+
+
+            .hero-content h1 {
+                font-size: 2.8em;
+            }
+            .hero-content p {
+                font-size: 1em;
+            }
+            .profile-slideout {
+                max-width: 100%; /* Full width on smaller screens */
+            }
+            .profile-slideout .close-btn {
+                padding: 15px var(--content-margin-mobile);
+                font-size: 2em;
+            }
+            .profile-content {
+                padding: 0 var(--content-margin-mobile) var(--content-margin-mobile);
+            }
+            .profile-content .profile-initials {
+                width: 50px;
+                height: 50px;
+                font-size: 1.6em;
+            }
+            .profile-content .profile-info h1 {
+                font-size: 1.4em;
+            }
+            .profile-content .profile-info a {
+                font-size: 0.8em;
+            }
+            .profile-content .segmented-button {
+                font-size: 0.9em;
+            }
+            .my-listing-card {
+                height: 160px;
+            }
+            .card-content h3 {
+                font-size: 1.6em;
+            }
+            .nav-item i {
+                font-size: 1.2em;
+            }
+            .nav-item span {
+                font-size: 0.7em;
+            }
+            .overlay-menu a {
+                font-size: 1.8em; /* Mindre på mobil */
+            }
+            .overlay-menu .sub-links li a {
+                font-size: 1em;
+            }
+            .overlay-menu .close-menu {
+                font-size: 2em;
+                top: 15px;
+                right: 15px;
+            }
+            .listing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (min-width: 769px) { /* Desktop-specifika inställningar */
+            body {
+                padding-top: var(--desktop-header-height); /* Utrymme för fixed desktop header */
+                padding-bottom: 0; /* Ingen bottom nav på desktop */
+            }
+
+            .desktop-header {
+                display: flex; /* Show desktop header, hidden by JS on mobile */
+            }
+            .mobile-header {
+                display: none; /* Dölj mobil header på desktop */
+            }
+
+            .page-container#home-page {
+                padding-top: 0; /* Desktop header handles top spacing */
+                flex-direction: row;
+                padding-left: var(--content-margin-desktop);
+                padding-right: var(--content-margin-desktop);
+                justify-content: center;
+                align-items: center;
+            }
+
+            .page-container#search-page-main {
+                padding: 0; /* Managed by sticky header */
+            }
+
+            .search-page-content {
+                padding: var(--content-margin-desktop); /* Större padding på desktop */
+            }
+            /* Rubriken är inte sticky, så den får ligga i vanlig flöde med sin egen marginal */
+            .search-page-title {
+                margin-top: 0; /* No extra top margin on desktop, it's inside content area */
+                margin-bottom: 15px; /* Justera marginal för desktop */
+                font-size: 3em;
+            }
+            .search-intro-text {
+                font-size: 1.1em;
+                margin-bottom: 25px; /* Justera marginal för desktop */
+            }
+
+            .search-sticky-header {
+                top: var(--desktop-header-height); /* Fäster precis under desktop headern */
+                padding-left: var(--content-margin-desktop);
+                padding-right: var(--content-margin-desktop);
+            }
+            /* Filter tags */
+            .filter-tags-container {
+                /* Återställ horisontell padding för desktop-storlek */
+                padding-left: var(--content-margin-desktop);
+                padding-right: var(--content-margin-desktop);
+                margin-left: calc(-1 * var(--content-margin-desktop));
+                margin-right: calc(-1 * var(--content-margin-desktop));
+                flex-wrap: wrap; /* Tillåt taggar att brytas på desktop om de får plats */
+                overflow-x: hidden; /* Ingen horisontell scroll på desktop */
+            }
+
+
+            .hero-main-content {
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: 50px;
+                max-width: 1200px;
+            }
+            .hero-content-text {
+                text-align: left;
+                margin-bottom: 0;
+                flex: 1;
+                min-width: 400px;
+            }
+            .hero-content h1 {
+                font-size: 4.5em;
+            }
+            .hero-content p {
+                font-size: 1.5em;
+            }
+            .hero-content-image {
+                flex: 1;
+                min-width: 300px;
+                height: auto;
+            }
+
+            .listing-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+            /* Overlay menu adjustments for desktop */
+            .overlay-menu {
+                padding: 0 var(--content-margin-desktop);
+                align-items: center;
+            }
+            .overlay-menu .menu-content {
+                 text-align: center;
+            }
+            .overlay-menu a, .overlay-menu .sub-links li a {
+                text-align: center;
+            }
+            .overlay-menu .close-menu {
+                top: var(--content-margin-desktop);
+                right: var(--content-margin-desktop);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <div id="app-container">
+        <header class="desktop-header" id="desktop-header">
+            <a href="#" class="logo">Erik Olsson</a>
+            <nav>
+                <ul>
+                    <li><a href="#" class="desktop-nav-link" data-page-target="search-page-main">Sök bostad</a></li>
+                    <li><a href="#">Våra kontor</a></li>
+                    <li><a href="#">Så funkar det</a></li>
+                </ul>
+            </nav>
+            <a href="#" class="cta-button">Börja sälja</a>
+            <div class="profile-icon" id="open-profile-slideout-desktop">
+                <i class="fas fa-user"></i>
+            </div>
+        </header>
+
+        <header class="mobile-header" id="mobile-header">
+            <a href="#" class="logo">Erik Olsson</a>
+            <div class="header-icons">
+                <div class="header-icon" id="home-page-mobile-profile">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="header-icon" id="mobile-menu-open">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </header>
+
+
+        <section class="page-container" id="home-page">
+            <div class="hero-main-content">
+                <div class="hero-content-text">
+                    <h1 class="animated-text-line">Välkommen till EO Market</h1>
+                    <p class="animated-text-line">Din nya plattform för att hitta och sälja bostäder.</p>
+                </div>
+                <img src="https://images.pexels.com/photos/32438148/pexels-photo-32438148.jpeg?_gl=1*1ev5dk9*_ga*MTE2MzIyMTA4OS4xNzM5NTQwNDg2*_ga_8JE65Q40S6*czE3NTEwMzQ1NzQkbzMzJGcxJHQxNzUxMDM0NTg4JGo0NiRsMCRoMA.." alt="Modern house" class="hero-content-image">
+            </div>
+        </section>
+
+        <main class="page-container" id="search-page-main">
+            <div class="search-page-content">
+                <h1 class="search-page-title animated-text-line">Sök bostad</h1>
+                <p class="search-intro-text animated-text-line">
+                    Använd kartan eller sökfältet för att hitta ditt nästa hem.
+                </p>
+
+                <div class="search-sticky-header">
+                    <div class="search-tabs">
+                        <button class="search-tab-button active" data-search-target="bostader">Bostäder 585</button>
+                        <button class="search-tab-button" data-search-target="maklare">Mäklare 300</button>
+                        <button class="search-tab-button" data-search-target="spekulanter">Spekulanter 585</button>
+                    </div>
+
+                    <div class="search-input-container">
+                        <input type="text" placeholder="Sök områden, adresser...">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+
+                    <div class="filter-options">
+                        <button class="filter-option-button">
+                            <i class="fas fa-sliders-h"></i> Filter
+                        </button>
+                        <button class="filter-option-button">
+                            Sortera efter <i class="fas fa-angle-down"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="filter-tags-container">
+                    <span class="filter-tag">sommarstuga</span>
+                    <span class="filter-tag">sekelskifte</span>
+                    <span class="filter-tag active">Havsnära</span>
+                    <span class="filter-tag">Barnvänligt</span>
+                    <span class="filter-tag">Renoveringsobjekt</span>
+                    <span class="filter-tag">Energi</span>
+                    <span class="filter-tag">Balkong</span>
+                    <span class="filter-tag">Pool</span>
+                    <span class="filter-tag">Naturnära</span>
+                    <span class="filter-tag">Bastukök</span>
+                    <span class="filter-tag">Sommaridyll</span>
+                    <span class="filter-tag">Sjöutsikt</span>
+                </div>
+
+
+                <div class="listing-grid">
+                    <div class="listing-card">
+                        <img src="https://images.unsplash.com/photo-1582268715875-e9185a97dd50?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxob3VzZSUyMGZhY2FkZSwlMjBwYW5vcmFtYXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                        <span class="tag">Kommande</span>
+                        <i class="far fa-heart heart-icon"></i>
+                        <div class="listing-card-content">
+                            <h3 class="animated-text-line">Katarina Östra Kyrkogårdsgränd 11</h3>
+                            <p class="animated-text-line">Villa, Område, Staden</p>
+                            <div class="details animated-text-line">
+                                <span>150 rum</span>
+                                <span>10 000 m²</span>
+                                <span>32 100 kr/mån</span>
+                            </div>
+                            <p style="font-weight: 600; margin-top: 10px;" class="animated-text-line">230 000 000 kr</p>
+                        </div>
+                    </div>
+
+                    <div class="listing-card">
+                        <img src="https://images.unsplash.com/photo-1579707997931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw3fHxncmVlbiUyMGhvdXNlJTJDJTIwcGFub3JhbWF8ZW58MHx8fHwxNzE5NzQ1ODIzfDA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                        <span class="tag">Kommande</span>
+                        <i class="far fa-heart heart-icon"></i>
+                        <div class="listing-card-content">
+                            <h3 class="animated-text-line">Södra Gatan 5</h3>
+                            <p class="animated-text-line">Lägenhet, Centrum, Staden</p>
+                            <div class="details animated-text-line">
+                                <span>3 rum</span>
+                                <span>75 m²</span>
+                                <span>3 500 kr/mån</span>
+                            </div>
+                            <p style="font-weight: 600; margin-top: 10px;" class="animated-text-line">3 500 000 kr</p>
+                        </div>
+                    </div>
+
+                    <div class="listing-card">
+                        <img src="https://images.unsplash.com/photo-1582046897931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw1fHxob3VzZSUyMGZhY2FkZSwlMjBwYW5vcmFtYXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                        <span class="tag">Kommande</span>
+                        <i class="far fa-heart heart-icon"></i>
+                        <div class="listing-card-content">
+                            <h3 class="animated-text-line">Norra Vägen 23</h3>
+                            <p class="animated-text-line">Radhus, Förort, Staden</p>
+                            <div class="details animated-text-line">
+                                <span>5 rum</span>
+                                <span>120 m²</span>
+                                <span>5 000 kr/mån</span>
+                            </div>
+                            <p style="font-weight: 600; margin-top: 10px;" class="animated-text-line">5 200 000 kr</p>
+                        </div>
+                    </div>
+                    <div class="listing-card">
+                        <img src="https://images.unsplash.com/photo-1582268715875-e9185a97dd50?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxob3VzZSUyMGZhY2FkZSwlMjBwYW5vcmFtYXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                        <span class="tag">Kommande</span>
+                        <i class="far fa-heart heart-icon"></i>
+                        <div class="listing-card-content">
+                            <h3 class="animated-text-line">Katarina Östra Kyrkogårdsgränd 12</h3>
+                            <p class="animated-text-line">Villa, Område, Staden</p>
+                            <div class="details animated-text-line">
+                                <span>150 rum</span>
+                                <span>10 000 m²</span>
+                                <span>32 100 kr/mån</span>
+                            </div>
+                            <p style="font-weight: 600; margin-top: 10px;" class="animated-text-line">230 000 000 kr</p>
+                        </div>
+                    </div>
+                     <div class="listing-card">
+                        <img src="https://images.unsplash.com/photo-1579707997931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw3fHxncmVlbiUyMGhvdXNlJTJDJTIwcGFub3JhbWF8ZW58MHx8fHwxNzE5NzQ1ODIzfDA&ixlib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                        <span class="tag">Kommande</span>
+                        <i class="far fa-heart heart-icon"></i>
+                        <div class="listing-card-content">
+                            <h3 class="animated-text-line">Södra Gatan 6</h3>
+                            <p class="animated-text-line">Lägenhet, Centrum, Staden</p>
+                            <div class="details animated-text-line">
+                                <span>3 rum</span>
+                                <span>75 m²</span>
+                                <span>3 500 kr/mån</span>
+                            </div>
+                            <p style="font-weight: 600; margin-top: 10px;" class="animated-text-line">3 500 000 kr</p>
+                        </div>
+                    </div>
+                    <div class="listing-card">
+                        <img src="https://images.unsplash.com/photo-1582046897931-e40ae1345f74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHw1fHxob3VzZSUyMGZhY2FkZSwlMjBwYW5vcmFtYXxlbnwwfHx8fDE3MjAxNzE2NjZ8MA&lib=rb-4.0.3&q=80&w=1080" alt="Bostad">
+                        <span class="tag">Kommande</span>
+                        <i class="far fa-heart heart-icon"></i>
+                        <div class="listing-card-content">
+                            <h3 class="animated-text-line">Norra Vägen 24</h3>
+                            <p class="animated-text-line">Radhus, Förort, Staden</p>
+                            <div class="details animated-text-line">
+                                <span>5 rum</span>
+                                <span>120 m²</span>
+                                <span>5 000 kr/mån</span>
+                            </div>
+                            <p style="font-weight: 600; margin-top: 10px;" class="animated-text-line">5 200 000 kr</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <nav id="bottom-nav">
+        <a href="#" class="nav-item active" data-page-target="search-page-main">
+            <i class="fas fa-search"></i>
+            <span>Sök</span>
+        </a>
+        <a href="#" class="nav-item" data-page-target="home-page">
+            <i class="fas fa-home"></i>
+            <span>Mina hem</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-fire"></i>
+            <span>Matchningar</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Mäklare</span>
+        </a>
+        <div class="nav-item" id="more-button">
+            <i class="fas fa-bars"></i>
+            <span>Mer</span>
+        </div>
+    </nav>
+
+    <div class="overlay-menu" id="overlay-menu">
+        <span class="close-menu" id="close-menu">&times;</span>
+        <div class="menu-content">
+            <a href="#" class="animated-text-line">Sök bostad</a>
+            <a href="#" class="animated-text-line" style="animation-delay: 0.05s;">Hitta mäklare</a>
+            <a href="#" class="animated-text-line" style="animation-delay: 0.1s;">Här finns vi</a>
+            <a href="#" class="animated-text-line" style="animation-delay: 0.15s;">Så funkar det</a>
+            <a href="#" class="animated-text-line" style="animation-delay: 0.2s;">Sälj bostad</a>
+            <ul class="sub-links">
+                <li><a href="#" class="animated-text-line" style="animation-delay: 0.25s;">Nyproduktion</a></li>
+                <li><a href="#" class="animated-text-line" style="animation-delay: 0.3s;">Utland</a></li>
+                <li><a href="#" class="animated-text-line" style="animation-delay: 0.35s;">Karriär</a></li>
+                <li><a href="#" class="animated-text-line" style="animation-delay: 0.4s;">Skapa bostadsbevakning</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <aside class="profile-slideout" id="profile-slideout">
+        <div class="close-btn" id="close-profile-slideout">
+             <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="profile-content">
+            <div class="profile-top-header">
+                <div class="profile-initials animated-text-line">RK</div>
+                <div class="profile-info">
+                    <h1 class="animated-text-line">Rebecca Karlsson</h1>
+                    <a href="#" class="animated-text-line">Gå till min profil <i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+
+            <div class="segmented-control">
+                <button class="segmented-button active animated-text-line" data-target="sell-mode-profile">Säljläge</button>
+                <button class="segmented-button animated-text-line" data-target="buy-mode-profile">Köpläge</button>
+            </div>
+
+            <section id="sell-mode-profile" class="content-section active">
+                <div class="my-listing-card" onclick="window.location.href='https://unsplash.com/photos/white-concrete-house-near-green-tree-during-daytime-4ojhpgKpS68'">
+                    <div class="card-content">
+                        <div class="label animated-text-line">Min bostad</div>
+                        <h3 class="animated-text-line">Årstagogs Väg 9C</h3>
+                        <div class="card-stats">
+                            <span class="card-stat-tag animated-text-line">132 visningar</span>
+                            <span class="card-stat-tag animated-text-line">48 sparat</span>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right card-action-arrow"></i>
+                </div>
+
+                <ul class="action-list">
+                    <li class="action-list-item animated-text-line">
+                        <i class="fas fa-bookmark"></i> Sälj bostad
+                    </li>
+                    <li class="action-list-item animated-text-line">
+                        <i class="fas fa-search"></i> Sök bostad
+                    </li>
+                    <li class="action-list-item animated-text-line">
+                        <i class="fas fa-briefcase"></i> Hitta mäklare
+                    </li>
+                    <li class="action-list-item animated-text-line">
+                        <i class="fas fa-users"></i> Hitta köpare
+                    </li>
+                    <li class="action-list-item animated-text-line">
+                        <i class="fas fa-sign-out-alt"></i> Logga ut
+                    </li>
+                </ul>
+            </section>
+
+            <section id="buy-mode-profile" class="content-section">
+                <div class="matches-header">
+                    <h2 class="animated-text-line">Matchningar</h2>
+                    <a href="#" class="animated-text-line">Alla <i class="fas fa-chevron-right"></i></a>
+                </div>
+
+                <ul class="action-list">
+                    <li class="action-list-item animated-text-line">
+                        <i class="fas fa-home"></i> Mina hem
+                    </li>
+                    <li class="action-list-item animated-text-line">
+                        <i class="fas fa-heart"></i> Sparade bostäder
+                    </li>
+                    <li class="action-list-item animated-text-line">
+                        <i class="fas fa-bell"></i> Bevakningar
+                    </li>
+                     <li class="action-list-item animated-text-line">
+                        <i class="fas fa-sign-out-alt"></i> Logga ut
+                    </li>
+                </ul>
+
+                <div style="padding-top: 30px;">
+                    <h2 style="font-family: var(--font-display); font-size: 1.4em; font-weight: 400; margin-bottom: 15px;" class="animated-text-line">Nytt på EO Market</h2>
+                    <p style="font-size: 0.95em; color: var(--color-gray-dark);" class="animated-text-line">
+                        Här kommer spännande nyheter och uppdateringar från EO Market att visas.
+                    </p>
+                </div>
+            </section>
+        </div>
+    </aside>
+
+    <script>
+        // --- Page State Variables ---
+        const homePage = document.getElementById('home-page');
+        const searchPage = document.getElementById('search-page-main');
+        const desktopHeader = document.getElementById('desktop-header');
+        const mobileHeader = document.getElementById('mobile-header'); // Ny: Generell mobil header
+        const bottomNav = document.getElementById('bottom-nav');
+
+        let currentPageId = 'home-page'; // Track current active page
+        let openMenusCount = 0; // Track how many overlay/slideout menus are open
+
+        // --- Body Overflow Management ---
+        function setBodyOverflowHidden(shouldHide) {
+            if (shouldHide) {
+                openMenusCount++;
+                document.body.style.overflow = 'hidden';
+            } else {
+                openMenusCount--;
+                if (openMenusCount <= 0) { // Only restore if no other menus are open
+                    document.body.style.overflow = '';
+                    openMenusCount = 0; // Ensure it doesn't go negative
+                }
+            }
+        }
+
+        // --- Animation Logic ---
+        function animateTextElements(containerElement) {
+            const elementsToAnimate = containerElement.querySelectorAll('.animated-text-line');
+            elementsToAnimate.forEach((el, index) => {
+                // Ensure element is initially hidden or reset from previous animation
+                el.classList.remove('animate');
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+
+                // Apply animation with a delay
+                setTimeout(() => {
+                    el.classList.add('animate');
+                }, index * 80); // 80ms delay per element (adjust as needed)
+            });
+        }
+
+
+        // --- Page Navigation Logic (Home vs. Search Page) ---
+        function showPage(pageId) {
+            // Hide all page containers first
+            document.querySelectorAll('.page-container').forEach(page => page.style.display = 'none');
+
+            currentPageId = pageId; // Update current page ID
+
+            // Show the target page
+            let targetPageElement;
+            if (pageId === 'home-page') {
+                targetPageElement = homePage;
+                homePage.style.display = 'flex'; // Use flex for hero content centering
+            } else if (pageId === 'search-page-main') {
+                targetPageElement = searchPage;
+                searchPage.style.display = 'block';
+            }
+
+            // Animate text elements on the new page
+            if (targetPageElement) {
+                animateTextElements(targetPageElement);
+            }
+
+
+            // Update active state in bottom nav
+            const navItems = document.querySelectorAll('#bottom-nav .nav-item');
+            navItems.forEach(item => {
+                if (item.dataset.pageTarget) { // Check if data-page-target exists
+                    if (item.dataset.pageTarget === pageId) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                }
+            });
+
+            handleResponsiveLayout(); // Re-evaluate header/nav visibility based on new page and screen size
+            window.scrollTo(0, 0); // Ensure scroll position is at top of new page
+        }
+
+        // --- Handle desktop header visibility and body padding on resize ---
+        function handleResponsiveLayout() {
+            if (window.innerWidth >= 769) { // Desktop
+                desktopHeader.style.display = 'flex';
+                mobileHeader.style.display = 'none'; // Ensure mobile header is hidden
+                bottomNav.style.display = 'none'; // Hide bottom nav on desktop
+
+                // Adjust body padding-top for desktop header
+                document.body.style.paddingTop = 'var(--desktop-header-height)';
+                document.body.style.paddingBottom = '0'; // No bottom nav on desktop
+
+                // homePage doesn't need padding-top as desktop header is fixed
+                homePage.style.paddingTop = '0';
+                // searchPage doesn't need direct padding-top, sticky header handles it with top: 0
+            } else { // Mobile
+                desktopHeader.style.display = 'none'; // Hide desktop header on mobile
+                mobileHeader.style.display = 'flex'; // Show new mobile header
+                bottomNav.style.display = 'flex'; // Show bottom nav on mobile
+
+                document.body.style.paddingTop = 'var(--mobile-header-height)'; // Space for new mobile header
+                document.body.style.paddingBottom = 'var(--bottom-nav-height)'; // Space for bottom nav on mobile
+
+                // Handle specific mobile header icon styling for home page
+                const homeProfileIcon = document.getElementById('home-page-mobile-profile');
+                if (homeProfileIcon) {
+                    if (currentPageId === 'home-page') {
+                        homeProfileIcon.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                        homeProfileIcon.style.color = 'var(--color-white)';
+                        homeProfileIcon.style.border = '1px solid rgba(255,255,255,0.3)';
+                        homeProfileIcon.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+                    } else {
+                        homeProfileIcon.style.backgroundColor = 'var(--color-gray-light)';
+                        homeProfileIcon.style.color = 'var(--color-gray-dark)';
+                        homeProfileIcon.style.border = 'none';
+                        homeProfileIcon.style.boxShadow = 'none';
+                    }
+                }
+            }
+        }
+
+        // --- Event Listeners for Page Navigation ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const navItems = document.querySelectorAll('#bottom-nav .nav-item');
+            navItems.forEach(item => {
+                if (item.dataset.pageTarget) {
+                    item.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        showPage(this.dataset.pageTarget);
+                    });
+                }
+            });
+
+            const desktopNavSearchLink = document.querySelector('.desktop-nav-link[data-page-target="search-page-main"]');
+            if (desktopNavSearchLink) {
+                desktopNavSearchLink.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    showPage('search-page-main');
+                });
+            }
+
+            // Initial call to set the correct layout on load
+            showPage('home-page'); // Call showPage once the DOM is ready
+            handleResponsiveLayout(); // And handle responsive layout
+        });
+
+
+        window.addEventListener('resize', handleResponsiveLayout);
+
+
+        // --- Bottom Navigation Show/Hide on Scroll (Mobile Only) ---
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener('scroll', () => {
+            // Only apply on mobile and if bottomNav is currently displayed
+            if (window.innerWidth <= 768 && bottomNav.style.display !== 'none') {
+                if (window.scrollY > lastScrollY && window.scrollY > 50) {
+                    bottomNav.classList.add('hidden-nav');
+                } else {
+                    bottomNav.classList.remove('hidden-nav');
+                }
+            }
+            lastScrollY = window.scrollY;
+        });
+
+        // --- Toggle "Mer" Overlay Menu (Black menu) ---
+        const moreButton = document.getElementById('more-button'); // From bottom nav
+        const mobileMenuOpenBtn = document.getElementById('mobile-menu-open'); // From new mobile header
+        const overlayMenu = document.getElementById('overlay-menu');
+        const closeMenuButton = document.getElementById('close-menu');
+
+        function toggleOverlayMenu() {
+            overlayMenu.classList.toggle('show');
+            setBodyOverflowHidden(overlayMenu.classList.contains('show'));
+            if (overlayMenu.classList.contains('show')) {
+                animateTextElements(overlayMenu);
+            }
+        }
+
+        if (moreButton) moreButton.addEventListener('click', toggleOverlayMenu);
+        if (mobileMenuOpenBtn) mobileMenuOpenBtn.addEventListener('click', toggleOverlayMenu); // Nytt: Öppna overlay från nya mobil headern
+        if (closeMenuButton) closeMenuButton.addEventListener('click', toggleOverlayMenu);
+        if (overlayMenu) {
+            overlayMenu.addEventListener('click', (event) => {
+                if (event.target === overlayMenu) { // Only close if clicking directly on overlay background
+                    toggleOverlayMenu();
+                }
+            });
+        }
+
+
+        // --- Profile Slide-out Menu Logic (White profile page) ---
+        // Changed home-page-mobile-profile to be the mobile profile button
+        const openProfileSlideoutBtnMobile = document.getElementById('home-page-mobile-profile'); // Nu: Den som sitter i mobil headern
+        const openProfileSlideoutBtnDesktop = document.getElementById('open-profile-slideout-desktop');
+        const profileSlideout = document.getElementById('profile-slideout');
+        const closeProfileSlideoutBtn = document.getElementById('close-profile-slideout');
+
+        function toggleProfileSlideout() {
+            profileSlideout.classList.toggle('show');
+            setBodyOverflowHidden(profileSlideout.classList.contains('show'));
+            if (profileSlideout.classList.contains('show')) {
+                // Animate elements within the active profile section
+                const activeProfileSection = profileSlideout.querySelector('.content-section.active');
+                if (activeProfileSection) {
+                    animateTextElements(activeProfileSection);
+                }
+                // Animate elements in the top profile header
+                animateTextElements(profileSlideout.querySelector('.profile-top-header'));
+                // Animate segmented control buttons
+                animateTextElements(profileSlideout.querySelector('.segmented-control'));
+            }
+        }
+
+        // Add listeners for both mobile and desktop profile icons
+        if (openProfileSlideoutBtnMobile) openProfileSlideoutBtnMobile.addEventListener('click', toggleProfileSlideout);
+        if (openProfileSlideoutBtnDesktop) openProfileSlideoutBtnDesktop.addEventListener('click', toggleProfileSlideout);
+        if (closeProfileSlideoutBtn) closeProfileSlideoutBtn.addEventListener('click', toggleProfileSlideout);
+
+        // Close slideout if clicking outside (more robust check needed)
+        document.addEventListener('click', (event) => {
+            if (!profileSlideout || !openProfileSlideoutBtnMobile || !openProfileSlideoutBtnDesktop) return; // Prevent errors if elements not found
+
+            const isProfileOpen = profileSlideout.classList.contains('show');
+            const isClickInsideProfile = profileSlideout.contains(event.target);
+            const isClickOnOpenProfileBtnMobile = openProfileSlideoutBtnMobile.contains(event.target);
+            const isClickOnOpenProfileBtnDesktop = openProfileSlideoutBtnDesktop.contains(event.target);
+            const isClickOnAnyOpenBtn = isClickOnOpenProfileBtnMobile || isClickOnOpenProfileBtnDesktop;
+
+            // If profile is open and click is outside the slideout and not on the buttons that open it
+            if (isProfileOpen && !isClickInsideProfile && !isClickOnAnyOpenBtn) {
+                toggleProfileSlideout();
+            }
+        });
+
+
+        // --- Segmented Control Logic (for Profile Slide-out) ---
+        const profileSegmentedButtons = document.querySelectorAll('#profile-slideout .segmented-button');
+        const profileContentSections = document.querySelectorAll('#profile-slideout .content-section');
+
+        profileSegmentedButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelector('#profile-slideout .segmented-button.active').classList.remove('active');
+                document.querySelector('#profile-slideout .content-section.active').classList.remove('active');
+
+                button.classList.add('active');
+
+                const targetId = button.dataset.target;
+                const targetSection = document.getElementById(targetId);
+                targetSection.classList.add('active');
+
+                // Animate text elements in the newly active section
+                animateTextElements(targetSection);
+            });
+        });
+
+        // --- Search Page Tabs Logic ---
+        const searchTabButtons = document.querySelectorAll('.search-tab-button');
+        searchTabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                searchTabButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                // You would typically load different content here based on the active tab
+                console.log('Active search tab:', this.dataset.searchTarget);
+            });
+        });
+
+        // --- Felsökningsfunktion för overflow:hidden ---
+        function findOverflowHiddenParents(element) {
+            let parent = element.parentElement;
+            let parentsWithOverflow = [];
+            while (parent) {
+                const style = window.getComputedStyle(parent);
+                // Check for any non-visible overflow that would clip sticky content
+                if (style.overflow !== 'visible' && style.overflow !== 'clip') {
+                    parentsWithOverflow.push({ element: parent, overflow: style.overflow });
+                }
+                parent = parent.parentElement;
+            }
+            return parentsWithOverflow;
+        }
+
+        // Kör denna när sidan är laddad och 'search-page-main' är synlig
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... (din befintliga DOMContentLoaded-kod) ...
+
+            // Lägg till detta sist i DOMContentLoaded för att felsöka sticky
+            const stickyHeader = document.querySelector('.search-sticky-header');
+            if (stickyHeader) {
+                const parents = findOverflowHiddenParents(stickyHeader);
+                if (parents.length > 0) {
+                    console.warn('Varning: Följande föräldraelement till .search-sticky-header har en "overflow" egenskap som inte är "visible". Detta kan förhindra att position:sticky fungerar som förväntat:');
+                    parents.forEach(p => {
+                        console.warn(p.element, 'Overflow:', p.overflow);
+                    });
+                } else {
+                    console.log('.search-sticky-header har inga föräldrar med non-visible overflow.');
+                }
+            }
+        });
+
+    </script>
+
+</body>
+</html>
