@@ -8,14 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const navItems = document.querySelectorAll('#bottom-nav .nav-item');
 
     const desktopProfileIcon = document.getElementById('desktop-profile-icon');
-    const mobileProfileIcon = document.getElementById('mobile-profile-icon');
+    // Use class for mobile profile icon as its ID changes for home page styling
+    const mobileProfileIcon = document.querySelector('.mobile-profile-icon');
     const profileSlideout = document.getElementById('profile-slideout');
     const closeProfileBtn = document.getElementById('close-profile-btn');
 
     const profileSegmentedButtons = document.querySelectorAll('.profile-content .segmented-button');
     const profileContentSections = document.querySelectorAll('.profile-content .content-section');
 
-    const mobileSearchIcon = document.getElementById('mobile-search-icon');
+    const mobileSearchIcon = document.querySelector('.mobile-search-icon');
     const overlayMenu = document.getElementById('overlay-menu');
     const closeOverlayMenuBtn = document.getElementById('close-overlay-menu');
     const moreNavItem = document.querySelector('.nav-item[data-page="more-menu"]');
@@ -23,87 +24,98 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroTextLines = document.querySelectorAll('.hero-content-text .animated-text-line');
     const heroImage = document.querySelector('.hero-content-image');
 
-    // --- Header and Footer Visibility Logic ---
-    let lastScrollY = window.scrollY;
-    let desktopBreakpoint = 768; // Matches CSS media query
+    const searchInput = document.querySelector('.search-input-container input');
+    const clearSearchBtn = document.querySelector('.search-input-container .clear-input-btn');
 
+    // --- State Variables ---
+    let lastScrollY = window.scrollY;
+    const desktopBreakpoint = 768; // Matches CSS media query breakpoint
+
+    // --- Helper Functions ---
+
+    /**
+     * Updates body padding based on active header and bottom nav visibility.
+     * Crucial for preventing content from being hidden behind fixed headers/footers.
+     */
     function setBodyPadding() {
         const isDesktop = window.innerWidth >= desktopBreakpoint;
-        const headerHeight = isDesktop ? getComputedStyle(document.documentElement).getPropertyValue('--desktop-header-height') : getComputedStyle(document.documentElement).getPropertyValue('--mobile-header-height');
-        const bottomNavHeight = getComputedStyle(document.documentElement).getPropertyValue('--bottom-nav-height');
-        const searchPageMain = document.getElementById('search-page-main');
-        const homePage = document.getElementById('home-page');
+        const currentHeader = isDesktop ? desktopHeader : mobileHeader;
+        const headerHeight = currentHeader.offsetHeight; // Get actual rendered height
 
-        // Apply padding to body based on header height
-        body.style.paddingTop = headerHeight;
+        body.style.paddingTop = `${headerHeight}px`;
 
-        // Apply padding-bottom only if bottom nav is visible and not on desktop
         if (!isDesktop) {
-            body.style.paddingBottom = bottomNavHeight;
+            body.style.paddingBottom = getComputedStyle(document.documentElement).getPropertyValue('--bottom-nav-height');
         } else {
             body.style.paddingBottom = '0px';
         }
-
-        // Adjust specific page padding for consistency with headers
-        pageContainers.forEach(page => {
-             if (page.id === 'search-page') {
-                // Search page handles its own padding, sticky header adjusts
-                // Need to ensure the content inside search-page-content doesn't get additional top padding
-                // This is mostly about making sure the fixed elements are accounted for on body padding.
-            } else {
-                // Other pages might need top padding if they don't have their own internal header handling
-                // This logic is mostly handled by `body.paddingTop`
-            }
-        });
     }
 
-    function handleHeaderVisibility() {
+    /**
+     * Manages desktop vs. mobile header/bottom nav display.
+     */
+    function handleLayoutVisibility() {
         if (window.innerWidth >= desktopBreakpoint) {
             desktopHeader.style.display = 'flex';
             mobileHeader.style.display = 'none';
             bottomNav.style.display = 'none';
+            bottomNav.classList.remove('bottom-nav-hidden'); // Ensure reset
         } else {
             desktopHeader.style.display = 'none';
             mobileHeader.style.display = 'flex';
             bottomNav.style.display = 'flex';
         }
-        setBodyPadding(); // Re-calculate padding on resize
+        setBodyPadding(); // Always recalculate padding on layout change
     }
 
-    // Bottom Navigation Hide/Show on Scroll (Mobile only)
+    /**
+     * Hides/shows the bottom navigation bar on scroll (mobile only).
+     */
     function handleBottomNavVisibility() {
         if (window.innerWidth < desktopBreakpoint) {
+            // Do not hide bottom nav if profile or overlay menu is open
             if (profileSlideout.classList.contains('show') || overlayMenu.classList.contains('show')) {
-                // Don't hide bottom nav if profile or overlay menu is open
-                bottomNav.classList.remove('hidden-nav');
-                return;
+                bottomNav.classList.remove('bottom-nav-hidden');
+                return; // Exit early
             }
 
             const currentScrollY = window.scrollY;
-            if (currentScrollY > lastScrollY && currentScrollY > mobileHeader.offsetHeight) {
-                // Scrolling down, hide nav, but only if past the mobile header
-                bottomNav.classList.add('hidden-nav');
-            } else if (currentScrollY < lastScrollY || currentScrollY <= 0) {
-                // Scrolling up or at the very top, show nav
-                bottomNav.classList.remove('hidden-nav');
+            // Only hide if scrolling down AND not at the very top AND scrolled past the header height
+            if (currentScrollY > lastScrollY && currentScrollY > mobileHeader.offsetHeight + 10) { // Add a small threshold
+                bottomNav.classList.add('bottom-nav-hidden');
+            } else if (currentScrollY < lastScrollY || currentScrollY <= mobileHeader.offsetHeight) {
+                // Scrolling up, or at/near the top, show nav
+                bottomNav.classList.remove('bottom-nav-hidden');
             }
             lastScrollY = currentScrollY;
         } else {
-            bottomNav.style.display = 'none'; // Ensure hidden on desktop
-            bottomNav.classList.remove('hidden-nav'); // Reset class in case of resize
+            // Ensure bottom nav is hidden and reset on desktop
+            bottomNav.style.display = 'none';
+            bottomNav.classList.remove('bottom-nav-hidden');
         }
     }
 
-    // --- Page Routing (Simplified) ---
+    /**
+     * Activates a given page and deactivates others.
+     * Manages page-specific styling/animations.
+     * @param {string} pageId - The ID of the page to show (e.g., 'home-page', 'search-page').
+     */
     function showPage(pageId) {
+        // Hide all pages first
         pageContainers.forEach(page => {
             page.style.display = 'none';
         });
-        document.getElementById(pageId).style.display = 'flex'; // Use flex for home, block for others if needed
+
+        // Show the target page
+        const targetPage = document.getElementById(pageId);
+        if (targetPage) {
+            // Home page uses flex, others generally block
+            targetPage.style.display = (pageId === 'home-page') ? 'flex' : 'block';
+        }
 
         // Update active state of bottom nav items
         navItems.forEach(item => {
-            if (item.dataset.page === pageId) {
+            if (item.dataset.page === pageId.replace('-page', '')) { // Convert 'home-page' to 'home'
                 item.classList.add('active');
             } else {
                 item.classList.remove('active');
@@ -112,122 +124,114 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Specific actions per page
         if (pageId === 'home-page') {
-            body.style.backgroundColor = 'var(--color-white)'; // Or hero background
-            // Trigger home page animations
-            setTimeout(() => {
+            // Trigger home page animations with a slight delay
+            // RequestAnimationFrame ensures browser is ready for paint before animation starts
+            requestAnimationFrame(() => {
                 heroTextLines.forEach((line, index) => {
-                    line.style.animationDelay = `${index * 0.2}s`;
+                    // Set custom property for delay (easier than style.animationDelay)
+                    line.style.setProperty('--animation-delay', `${index * 0.2}s`);
                     line.classList.add('animate');
                 });
                 heroImage.classList.add('animate');
-            }, 100); // Small delay to ensure display is set
-            // Change mobile profile icon for home page hero
-            document.getElementById('mobile-profile-icon').id = 'home-page-mobile-profile';
+                // Adjust mobile profile icon style for home page hero
+                mobileProfileIcon.classList.add('on-home-page');
+            });
         } else {
             // Remove home page specific classes if not on home page
-            heroTextLines.forEach(line => line.classList.remove('animate'));
+            heroTextLines.forEach(line => {
+                line.classList.remove('animate');
+                line.style.removeProperty('--animation-delay'); // Clean up custom property
+            });
             heroImage.classList.remove('animate');
-            const mobileProfile = document.getElementById('home-page-mobile-profile');
-            if (mobileProfile) {
-                mobileProfile.id = 'mobile-profile-icon'; // Revert ID
-            }
-            body.style.backgroundColor = 'var(--color-white)';
+            mobileProfileIcon.classList.remove('on-home-page');
         }
 
-        // Reset scroll position to top when changing pages
-        window.scrollTo(0, 0);
+        // Ensure overlays are closed
+        profileSlideout.classList.remove('show');
+        overlayMenu.classList.remove('show');
+        body.classList.remove('no-scroll'); // Restore body scroll
+
+        // Reset scroll position to top when changing pages, but defer to allow layout to settle
+        window.scrollTo({ top: 0, behavior: 'instant' }); // Use 'instant' for direct page jumps
         lastScrollY = 0; // Reset last scroll position for bottom nav logic
         handleBottomNavVisibility(); // Ensure bottom nav state is correct
     }
 
-    // Initial page load (show home page)
-    showPage('home-page');
+    /**
+     * Manages overlay (profile/more menu) open/close state.
+     * @param {HTMLElement} overlayElement - The overlay DOM element.
+     * @param {boolean} show - True to show, false to hide.
+     */
+    function toggleOverlay(overlayElement, show) {
+        if (show) {
+            overlayElement.classList.add('show');
+            body.classList.add('no-scroll'); // Disable body scroll
+            bottomNav.classList.add('bottom-nav-hidden'); // Hide bottom nav
+        } else {
+            overlayElement.classList.remove('show');
+            body.classList.remove('no-scroll'); // Enable body scroll
+            handleBottomNavVisibility(); // Re-evaluate bottom nav visibility
+        }
+    }
 
     // --- Event Listeners ---
 
-    // Nav Item Clicks
+    // Initial page load (show home page)
+    showPage('home-page');
+    // Set initial padding based on current layout
+    handleLayoutVisibility();
+
+    // Nav Item Clicks (Bottom Nav and Desktop Nav)
+    // Use event delegation for desktop nav links
+    desktopHeader.addEventListener('click', (e) => {
+        const targetLink = e.target.closest('a[data-page]');
+        if (targetLink) {
+            e.preventDefault();
+            showPage(`${targetLink.dataset.page}-page`);
+        }
+    });
+
+    // Bottom Nav Item Clicks
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const page = e.currentTarget.dataset.page;
+
             if (page === 'profile') {
-                profileSlideout.classList.add('show');
-                body.style.overflow = 'hidden'; // Prevent body scroll when menu is open
-                bottomNav.classList.add('hidden-nav'); // Hide bottom nav when profile is open
+                toggleOverlay(profileSlideout, true);
             } else if (page === 'more-menu') {
-                overlayMenu.classList.add('show');
-                body.style.overflow = 'hidden'; // Prevent body scroll when menu is open
-                bottomNav.classList.add('hidden-nav'); // Hide bottom nav when overlay is open
-            }
-            else if (page === 'add-listing') {
+                toggleOverlay(overlayMenu, true);
+            } else if (page === 'add-listing') {
                 alert('Denna sida är under utveckling!'); // Placeholder for "Sälj" button
-                // Ideally, navigate to an "add listing" page
-            }
-            else {
-                showPage(page === 'home' ? 'home-page' : 'search-page'); // Map data-page to actual page ID
-                profileSlideout.classList.remove('show'); // Close profile if open
-                overlayMenu.classList.remove('show'); // Close overlay if open
-                body.style.overflow = ''; // Allow body scroll
+            } else {
+                showPage(`${page}-page`); // Map data-page to actual page ID
             }
         });
     });
 
-    // Profile Menu Toggle
+    // Profile Menu Toggle (Desktop and Mobile)
     if (desktopProfileIcon) {
-        desktopProfileIcon.addEventListener('click', () => {
-            profileSlideout.classList.add('show');
-            body.style.overflow = 'hidden';
-            bottomNav.classList.add('hidden-nav');
-        });
+        desktopProfileIcon.addEventListener('click', () => toggleOverlay(profileSlideout, true));
     }
-    if (mobileProfileIcon) { // Use a click listener on parent header if mobileProfileIcon is dynamic
-         // Attach event listener directly to the icon. The ID is dynamically changed for home page, so let's use a class or more robust selector.
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('#mobile-profile-icon') || e.target.closest('#home-page-mobile-profile')) {
-                profileSlideout.classList.add('show');
-                body.style.overflow = 'hidden';
-                bottomNav.classList.add('hidden-nav');
-            }
-        });
-    }
+
+    // Mobile profile icon - use delegation as ID might change on home page
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.mobile-profile-icon')) {
+            toggleOverlay(profileSlideout, true);
+        }
+    });
 
     if (closeProfileBtn) {
-        closeProfileBtn.addEventListener('click', () => {
-            profileSlideout.classList.remove('show');
-            body.style.overflow = ''; // Restore body scroll
-            handleBottomNavVisibility(); // Ensure bottom nav reappears if needed
-        });
+        closeProfileBtn.addEventListener('click', () => toggleOverlay(profileSlideout, false));
     }
 
-    // Overlay Menu Toggle
+    // Overlay Menu Toggle (Mobile search icon should actually go to search page, not open overlay for 'Mer')
     if (mobileSearchIcon) {
-        mobileSearchIcon.addEventListener('click', (e) => {
-            // If the search icon should also open the overlay for 'Mer'
-            // For now, let's assume it leads to the search page directly as per current nav item.
-            // If you want it to open a *different* search overlay, this needs more specific markup.
-            // For now, it will just switch to the search page.
-            showPage('search-page');
-            profileSlideout.classList.remove('show'); // Close profile if open
-            overlayMenu.classList.remove('show'); // Close overlay if open
-            body.style.overflow = ''; // Allow body scroll
-        });
-    }
-
-    if (moreNavItem) {
-         moreNavItem.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default navigation
-            overlayMenu.classList.add('show');
-            body.style.overflow = 'hidden';
-            bottomNav.classList.add('hidden-nav');
-         });
+        mobileSearchIcon.addEventListener('click', () => showPage('search-page'));
     }
 
     if (closeOverlayMenuBtn) {
-        closeOverlayMenuBtn.addEventListener('click', () => {
-            overlayMenu.classList.remove('show');
-            body.style.overflow = ''; // Restore body scroll
-            handleBottomNavVisibility(); // Ensure bottom nav reappears if needed
-        });
+        closeOverlayMenuBtn.addEventListener('click', () => toggleOverlay(overlayMenu, false));
     }
 
     // Profile Segmented Control
@@ -248,24 +252,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Search Page Tab Control
+    // Search Page Tab Control (Till Salu / Kommande)
     const searchTabButtons = document.querySelectorAll('.search-tab-button');
     searchTabButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             searchTabButtons.forEach(btn => btn.classList.remove('active'));
             e.target.classList.add('active');
-            // Add logic here to filter listings based on 'buy' or 'coming-soon'
+            // In a real app, you'd fetch/filter data here based on e.target.dataset.tab
             console.log(`Showing listings for: ${e.target.dataset.tab}`);
-            // In a real app, you'd fetch/filter data here.
         });
     });
 
-    // Scroll event for bottom nav
+    // Search input clear button logic
+    if (searchInput && clearSearchBtn) {
+        searchInput.addEventListener('input', () => {
+            clearSearchBtn.style.display = searchInput.value.length > 0 ? 'inline-block' : 'none';
+        });
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearchBtn.style.display = 'none';
+            searchInput.focus(); // Keep focus on input after clearing
+        });
+    }
+
+
+    // Global Event Listeners
     window.addEventListener('scroll', handleBottomNavVisibility);
-
-    // Resize event to handle header/footer display and padding
-    window.addEventListener('resize', handleHeaderVisibility);
-
-    // Initial setup calls
-    handleHeaderVisibility(); // Sets initial header display and body padding
+    window.addEventListener('resize', () => {
+        handleLayoutVisibility(); // Handle header/footer display and padding
+        handleBottomNavVisibility(); // Adjust bottom nav visibility based on new size
+    });
 });
